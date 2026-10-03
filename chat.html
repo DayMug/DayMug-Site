@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat with DayMug Agents — Models, Working Directory and Questions</title>
+    <meta name="description" content="Use DayMug agents in the browser: personas, the model, account and thinking picker, working directories, queued messages, question cards and sharing." />
+    <link rel="canonical" href="https://www.daymug.com/chat" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DayMug" />
+    <meta property="og:url" content="https://www.daymug.com/chat" />
+    <meta property="og:title" content="Chat with DayMug Agents — Models, Working Directory and Questions" />
+    <meta property="og:description" content="Use DayMug agents in the browser: personas, the model, account and thinking picker, working directories, queued messages, question cards and sharing." />
+    <meta property="og:image" content="https://www.daymug.com/avatar.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Chat with DayMug Agents — Models, Working Directory and Questions" />
+    <meta name="twitter:description" content="Use DayMug agents in the browser: personas, the model, account and thinking picker, working directories, queued messages, question cards and sharing." />
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      // Apply the OS before first paint: the stored choice, else the visitor's
+      // own system — macOS on a Mac, Linux for everyone else (see script.js).
+      document.documentElement.classList.add("os-js");
+      (function () {
+        var os = "";
+        try {
+          os = localStorage.getItem("daymug-os");
+        } catch (e) {}
+        if (os !== "linux" && os !== "macos") {
+          var p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || navigator.userAgent || "";
+          os = /mac/i.test(p) ? "macos" : "linux";
+        }
+        document.documentElement.setAttribute("data-os", os);
+      })();
+    </script>
+  </head>
+
+  <body>
+    <header class="nav">
+      <div class="nav__inner">
+        <a class="brand" href="index.html#top" aria-label="DayMug home">
+          <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" />
+          <span class="brand__name">day<em>mug</em></span>
+        </a>
+        <nav class="nav__links">
+          <a href="index.html#features">Features</a>
+          <a href="install.html" class="nav__keep">Install</a>
+          <div class="nav__menu">
+            <a href="config.html" class="nav__menu-trigger" aria-haspopup="true">Config<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Config">
+              <a href="config.html" role="menuitem"><strong>config.yaml</strong><span>Server, auth, guardrails, upgrades</span></a>
+              <a href="providers.html" role="menuitem"><strong>Providers &amp; models</strong><span>AI accounts, models, pricing</span></a>
+              <a href="security.html" role="menuitem"><strong>Users &amp; SSO</strong><span>Who signs in, and how</span></a>
+              <a href="operations.html" role="menuitem"><strong>Upgrades &amp; troubleshooting</strong><span>Service, logs, backups</span></a>
+              <a href="cli.html" role="menuitem"><strong>Command line</strong><span>Every daymug command</span></a>
+            </div>
+          </div>
+          <div class="nav__menu">
+            <a href="chat.html" class="nav__menu-trigger active" aria-haspopup="true">Usage<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Usage">
+              <a href="chat.html" class="active" aria-current="page" role="menuitem"><strong>Chat</strong><span>Agents, models, working directory</span></a>
+              <a href="files.html" role="menuitem"><strong>Files</strong><span>Uploads and downloads</span></a>
+              <a href="skills.html" role="menuitem"><strong>Skills</strong><span>Account, user and agent skills</span></a>
+              <a href="env.html" role="menuitem"><strong>Environment variables</strong><span>Tokens and settings for tools</span></a>
+              <a href="sandbox.html" role="menuitem"><strong>Sandbox</strong><span>What a jailed agent can reach</span></a>
+              <a href="scheduled-tasks.html" role="menuitem"><strong>Scheduled tasks</strong><span>Run an agent on a cron schedule</span></a>
+              <a href="notifications.html" role="menuitem"><strong>Notifications</strong><span>Browser, Bark and PushDeer</span></a>
+              <a href="im-bots.html" role="menuitem"><strong>IM bots</strong><span>Slack, 飞书, Telegram, 微信</span></a>
+              <a href="case-mode.html" role="menuitem"><strong>Case-file mode</strong><span>Long IM threads that keep going</span></a>
+            </div>
+          </div>
+          <a href="https://github.com/DayMug/DayMug" class="nav__gh nav__keep" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+          <a href="install.html" class="nav__cta">Get started →</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top" class="docs">
+      <div class="container docs__inner">
+        <aside class="docs-side" aria-label="Documentation">
+          <div class="docs-side__group">
+            <span class="label">Install</span>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Config</span>
+            <ul>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Usage</span>
+            <ul>
+              <li><a href="chat.html" class="active" aria-current="page">Chat</a>
+                <ul>
+                  <li><a href="#agents">Agents and personas</a></li>
+                  <li><a href="#model">Model, account and thinking</a></li>
+                  <li><a href="#workdir">Working directory</a></li>
+                  <li><a href="#while-working">Sending while it works</a></li>
+                  <li><a href="#questions">When the agent asks you</a></li>
+                  <li><a href="#slash">Slash commands</a></li>
+                  <li><a href="#organise">Pin, search and share</a></li>
+                </ul>
+              </li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+        </aside>
+
+        <article class="doc">
+          <span class="doc__eyebrow">Usage · Chat</span>
+          <h1>Chat with <em>an agent.</em></h1>
+          <p class="doc__lede">
+            Every conversation belongs to one agent and runs in one working
+            directory. Pick the agent on the left, start a conversation, and
+            type. This page covers the controls around the message box.
+          </p>
+
+          <h2 id="agents">Agents and personas</h2>
+          <p>
+            An <strong>agent</strong> is a named assistant you own: a persona
+            (<em>Role definition</em>), a working directory, a default model and
+            optional IM bots. Create one under <em>Settings → Agents → New
+            Agent</em>; you can have as many as you like, and each keeps its own
+            conversations.
+          </p>
+          <ul>
+            <li><strong>Role definition</strong> is sent with every turn — who the agent is, how it works, what it should care about. Longer, task-specific playbooks belong in <a href="skills.html">skills</a>.</li>
+            <li><strong>Working directory</strong> is where the agent's commands run. It must sit inside your own home directory.</li>
+            <li><strong>Default model</strong> is used for new web conversations and new IM threads; existing conversations keep theirs.</li>
+          </ul>
+
+          <h2 id="model">Model, account and thinking</h2>
+          <p>
+            The picker under the message box chooses the provider account, the
+            model and the <em>Thinking</em> level (<em>Default</em>,
+            <em>Low</em>, <em>Medium</em>, <em>High</em>, <em>Max</em>). The
+            choice is saved with the conversation.
+          </p>
+          <div class="callout">
+            <span class="callout__label">Locks after the first message</span>
+            <p>Provider and account can't change once the conversation has started — the session lives on that account. Start a new conversation to switch.</p>
+          </div>
+
+          <h2 id="workdir">Working directory</h2>
+          <p>
+            A new conversation starts in the agent's working directory. To run
+            it somewhere else, navigate to that folder in the workspace panel on
+            the right <strong>before</strong> you send anything — the directory
+            locks after the first message or upload.
+          </p>
+
+          <h2 id="while-working">Sending while it works</h2>
+          <p>
+            You don't have to wait for a reply to finish. A message sent while
+            the agent is busy goes into a queue and runs after the current task;
+            click <strong>×</strong> on a queued message to recall and edit it.
+            On accounts that keep a resident session, a message can instead be
+            inserted into the running task.
+          </p>
+          <p>
+            When every slot on the account is busy, the task shows
+            <em>Waiting for an account</em> until one frees up.
+          </p>
+
+          <h2 id="questions">When the agent asks you</h2>
+          <p>
+            An agent can stop and ask: a card titled <em>Your input is
+            needed</em> appears with options (sometimes several may be
+            picked) and a free-text answer. The agent continues once you
+            submit. Question cards work on <code>claude</code> and
+            <code>codex</code> accounts; <code>claude-compatible</code> accounts
+            don't offer them.
+          </p>
+
+          <h2 id="slash">Slash commands</h2>
+          <p>
+            DayMug doesn't interpret slash commands in the browser: whatever
+            you type — <code>/compact</code>, a project's own commands — is
+            passed to the CLI exactly as written. IM bots add a few of their
+            own, such as <code>/new</code> on WeChat (see
+            <a href="im-bots.html#wechat">IM bots</a>).
+          </p>
+
+          <h2 id="organise">Pin, search and share</h2>
+          <ul>
+            <li><strong>Pin to top</strong> keeps a conversation above the rest; the search box filters the list.</li>
+            <li><strong>Share → Copy share link</strong> gives anyone with the link a view of the conversation; <strong>Unshare</strong> removes the link.</li>
+            <li>Conversations persist on the server, so the same list follows you to your phone or another browser.</li>
+          </ul>
+          <nav class="doc-pager" aria-label="Pagination">
+            <a class="doc-pager__link" href="cli.html"><span>← Previous</span><strong>Command line</strong></a>
+            <a class="doc-pager__link doc-pager__link--next" href="files.html"><span>Next →</span><strong>Files</strong></a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="foot">
+      <div class="container">
+        <div class="foot__grid">
+          <div class="foot__brand">
+            <div style="display: inline-flex; align-items: center; gap: 10px">
+              <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" style="width: 28px; height: 28px" />
+              <span class="brand__name">day<em>mug</em></span>
+            </div>
+            <p>
+              An open-source, self-hosted room for your AI agents — for one
+              person or a whole team. Open it on any device. Keep your work
+              close at hand.
+            </p>
+          </div>
+          <div class="foot__col">
+            <h6>Install &amp; config</h6>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Usage</h6>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Community</h6>
+            <ul>
+              <li><a href="https://github.com/DayMug/DayMug" target="_blank" rel="noopener">Source on GitHub</a></li>
+              <li><a href="https://github.com/DayMug/DayMug/issues" target="_blank" rel="noopener">Report an issue</a></li>
+              <li><a href="mailto:hi@ifconfiger.com">hi@ifconfiger.com</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot__bottom">
+          <span>© 2026 DayMug · open source</span>
+          <span>brewed with care</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Install DayMug — One-Line Installer for Linux and macOS</title>
+    <meta name="description" content="Install DayMug in five minutes with the one-line installer for Linux and macOS: prerequisites, first run, and domain, reverse proxy or LAN access." />
+    <link rel="canonical" href="https://www.daymug.com/install" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DayMug" />
+    <meta property="og:url" content="https://www.daymug.com/install" />
+    <meta property="og:title" content="Install DayMug — One-Line Installer for Linux and macOS" />
+    <meta property="og:description" content="Install DayMug in five minutes with the one-line installer for Linux and macOS: prerequisites, first run, and domain, reverse proxy or LAN access." />
+    <meta property="og:image" content="https://www.daymug.com/avatar.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Install DayMug — One-Line Installer for Linux and macOS" />
+    <meta name="twitter:description" content="Install DayMug in five minutes with the one-line installer for Linux and macOS: prerequisites, first run, and domain, reverse proxy or LAN access." />
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      // Apply the OS before first paint: the stored choice, else the visitor's
+      // own system — macOS on a Mac, Linux for everyone else (see script.js).
+      document.documentElement.classList.add("os-js");
+      (function () {
+        var os = "";
+        try {
+          os = localStorage.getItem("daymug-os");
+        } catch (e) {}
+        if (os !== "linux" && os !== "macos") {
+          var p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || navigator.userAgent || "";
+          os = /mac/i.test(p) ? "macos" : "linux";
+        }
+        document.documentElement.setAttribute("data-os", os);
+      })();
+    </script>
+  </head>
+
+  <body>
+    <!-- ===================== NAV ===================== -->
+    <header class="nav">
+      <div class="nav__inner">
+        <a class="brand" href="index.html#top" aria-label="DayMug home">
+          <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" />
+          <span class="brand__name">day<em>mug</em></span>
+        </a>
+        <nav class="nav__links">
+          <a href="index.html#features">Features</a>
+          <a href="install.html" class="nav__keep active">Install</a>
+          <div class="nav__menu">
+            <a href="config.html" class="nav__menu-trigger" aria-haspopup="true">Config<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Config">
+              <a href="config.html" role="menuitem"><strong>config.yaml</strong><span>Server, auth, guardrails, upgrades</span></a>
+              <a href="providers.html" role="menuitem"><strong>Providers &amp; models</strong><span>AI accounts, models, pricing</span></a>
+              <a href="security.html" role="menuitem"><strong>Users &amp; SSO</strong><span>Who signs in, and how</span></a>
+              <a href="operations.html" role="menuitem"><strong>Upgrades &amp; troubleshooting</strong><span>Service, logs, backups</span></a>
+              <a href="cli.html" role="menuitem"><strong>Command line</strong><span>Every daymug command</span></a>
+            </div>
+          </div>
+          <div class="nav__menu">
+            <a href="chat.html" class="nav__menu-trigger" aria-haspopup="true">Usage<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Usage">
+              <a href="chat.html" role="menuitem"><strong>Chat</strong><span>Agents, models, working directory</span></a>
+              <a href="files.html" role="menuitem"><strong>Files</strong><span>Uploads and downloads</span></a>
+              <a href="skills.html" role="menuitem"><strong>Skills</strong><span>Account, user and agent skills</span></a>
+              <a href="env.html" role="menuitem"><strong>Environment variables</strong><span>Tokens and settings for tools</span></a>
+              <a href="sandbox.html" role="menuitem"><strong>Sandbox</strong><span>What a jailed agent can reach</span></a>
+              <a href="scheduled-tasks.html" role="menuitem"><strong>Scheduled tasks</strong><span>Run an agent on a cron schedule</span></a>
+              <a href="notifications.html" role="menuitem"><strong>Notifications</strong><span>Browser, Bark and PushDeer</span></a>
+              <a href="im-bots.html" role="menuitem"><strong>IM bots</strong><span>Slack, 飞书, Telegram, 微信</span></a>
+              <a href="case-mode.html" role="menuitem"><strong>Case-file mode</strong><span>Long IM threads that keep going</span></a>
+            </div>
+          </div>
+          <a href="https://github.com/DayMug/DayMug" class="nav__gh nav__keep" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+          <a href="install.html" class="nav__cta">Get started →</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top" class="docs">
+      <div class="container docs__inner">
+        <aside class="docs-side" aria-label="Documentation">
+          <div class="docs-side__group">
+            <span class="label">Install</span>
+            <ul>
+              <li><a href="install.html" class="active" aria-current="page">Install</a>
+                <ul>
+                  <li><a href="#before">Before you start</a></li>
+                  <li><a href="#install">1 · Run the installer</a></li>
+                  <li><a href="#admin">2 · Create the admin</a></li>
+                  <li><a href="#account">3 · Add an AI account</a></li>
+                  <li><a href="#agent">4 · Create an agent</a></li>
+                  <li><a href="#optional">Optional: config.yaml</a></li>
+                  <li><a href="#expose">Optional: other devices</a></li>
+                  <li><a href="#source">Build from source</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Config</span>
+            <ul>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Usage</span>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+        </aside>
+
+        <article class="doc">
+          <span class="doc__eyebrow">Install</span>
+          <h1>Pour it once. <em>Drink for years.</em></h1>
+          <p class="doc__lede">
+            DayMug runs on one Mac or Linux computer; every other device —
+            yours, or the people you share it with — just opens it in a
+            browser. Setting it up is one command in the terminal, then a few
+            clicks in the browser. About five minutes.
+          </p>
+          <div class="os-switch"></div>
+
+          <div class="callout callout--tip">
+            <span class="callout__label">The whole path</span>
+            <p>
+              <strong>Terminal, once:</strong> <a href="#before">check Node.js</a>
+              → <a href="#install">run the installer</a>.
+              <strong>Browser, from then on:</strong>
+              <a href="#admin">create the admin</a> →
+              <a href="#account">add an AI account</a> →
+              <a href="#agent">create an agent and chat</a>.
+              Editing <code>config.yaml</code> and <a href="#expose">reaching it
+              from other devices</a> are optional.
+            </p>
+          </div>
+
+          <h2 id="before">Before you start</h2>
+          <table class="doc-table">
+            <tbody>
+              <tr><td>A computer</td><td>a Mac with Apple Silicon, or Linux on x86_64 or ARM64, that stays on while you use it</td></tr>
+              <tr><td>A normal user account</td><td>the installer refuses to run as root</td></tr>
+              <tr><td>Node.js 18+</td><td>Claude runs on it. The installer can't install Node.js itself — get it first from your package manager, <a href="https://nodejs.org" target="_blank" rel="noopener">nodejs.org</a> or nvm</td></tr>
+              <tr><td>An AI plan</td><td>a Claude or ChatGPT/Codex subscription, or an API key for a compatible endpoint</td></tr>
+              <tr><td>Not needed</td><td>Docker, a database server, a cloud account</td></tr>
+            </tbody>
+          </table>
+          <div class="os-gated">
+          <div class="codeblock" data-os-only="linux"><pre class="codeblock__body"><code>node --version   <span class="cmt"># v18 or later? good. Otherwise: your distro's package, NodeSource or nvm</span></code></pre></div>
+          <div class="codeblock" data-os-only="macos"><pre class="codeblock__body"><code>node --version   <span class="cmt"># v18 or later? good. Otherwise:</span>
+brew install node</code></pre></div>
+          </div>
+
+          <h2 id="install">Step 1 · Run the installer <span class="label">terminal</span></h2>
+          <div class="os-gated">
+          <div class="codeblock" data-os-only="linux">
+            <div class="codeblock__head">
+              <span><span class="tag">one line</span> &nbsp;— linux</span>
+              <button class="codeblock__copy" data-copy="curl -fsSL https://github.com/DayMug/DayMug/releases/latest/download/install.sh | bash">copy</button>
+            </div>
+<pre class="codeblock__body"><span class="cmt"># as your normal user, not root</span>
+<span class="pmt">$</span> <span class="fn">curl</span> <span class="key">-fsSL</span> <span class="str">https://github.com/DayMug/DayMug/releases/latest/download/install.sh</span> | <span class="fn">bash</span>
+</pre>
+          </div>
+          <div class="codeblock" data-os-only="macos">
+            <div class="codeblock__head">
+              <span><span class="tag">one line</span> &nbsp;— macOS · apple silicon</span>
+              <button class="codeblock__copy" data-copy="curl -fsSL https://github.com/DayMug/DayMug/releases/latest/download/install.sh | bash">copy</button>
+            </div>
+<pre class="codeblock__body"><span class="cmt"># in Terminal, as your normal user</span>
+<span class="pmt">$</span> <span class="fn">curl</span> <span class="key">-fsSL</span> <span class="str">https://github.com/DayMug/DayMug/releases/latest/download/install.sh</span> | <span class="fn">bash</span>
+</pre>
+          </div>
+          </div>
+          <p>It does all of the server-side work, in this order:</p>
+          <ol>
+            <li>Downloads the latest release for your machine and checks its checksum.</li>
+            <li>Offers to install the Claude Agent SDK with npm if it's missing — answer <strong>Y</strong>.</li>
+            <li>Lays out <code>~/.daymug/</code>: the binary, a default <code>config.yaml</code>, the database and logs.</li>
+            <li>
+              <span data-os-only="linux">Registers a systemd user service and starts it.</span>
+              <span data-os-only="macos">Registers a LaunchAgent (it starts on login) and starts it.</span>
+            </li>
+          </ol>
+          <p>It ends with a short summary. On a machine that already had Node.js it looks like this:</p>
+          <div class="codeblock"><pre class="codeblock__body"><code>==&gt; DayMug v1.x.y installed: ~/.daymug/daymug
+    Service:  started
+    Open:     http://127.0.0.1:8090 and create the first admin account
+    Next:     add an AI provider under Settings → Administration → Providers &amp; models
+    Deps:     installed @anthropic-ai/claude-agent-sdk
+    Deps:     Codex (optional): npm install -g @openai/codex
+    Trouble:  ~/.daymug/daymug doctor
+    Log:      ~/.daymug/logs/daymug.log</code></pre></div>
+          <p><strong>Is that enough?</strong> Check two lines, then leave the terminal:</p>
+          <table class="doc-table">
+            <thead><tr><th>If the summary says</th><th>Do this</th></tr></thead>
+            <tbody>
+              <tr><td><code>Service: started</code> and no <code>Deps</code> line asking you to install something</td><td>Nothing — go to <a href="#admin">Step 2</a>.</td></tr>
+              <tr><td><code>Deps: Node.js 18+ not found</code> or <code>Claude needs: npm install -g …</code></td><td>Install what it names (Node.js first, then <code>npm install -g @anthropic-ai/claude-agent-sdk</code>), then restart the service — command below.</td></tr>
+              <tr><td><code>Deps: Codex (optional)</code></td><td>Only if you'll add a Codex account: <code>npm install -g @openai/codex</code>.</td></tr>
+              <tr><td><code>Service: installed, not started</code> or <code>not registered</code></td><td>Run the command printed on that line.</td></tr>
+            </tbody>
+          </table>
+          <div class="os-gated">
+          <div class="codeblock" data-os-only="linux"><pre class="codeblock__body"><code>systemctl --user restart daymug.service   <span class="cmt"># restart the service</span></code></pre></div>
+          <div class="codeblock" data-os-only="macos"><pre class="codeblock__body"><code>launchctl kickstart -k "gui/$(id -u)/com.daymug.daymug"   <span class="cmt"># restart the service</span></code></pre></div>
+          </div>
+          <p>
+            Re-running the installer is safe: it replaces the binary and keeps
+            your <code>config.yaml</code> and data. Flags (a specific version,
+            no prompts, no service) are under
+            <a href="cli.html#installer">Installer options</a>.
+          </p>
+
+          <h2 id="admin">Step 2 · Create the admin <span class="label">browser</span></h2>
+          <p>
+            Open the address from the <code>Open:</code> line —
+            <code>http://127.0.0.1:8090</code> by default — on the computer you
+            installed on. An empty instance asks you to create the first
+            administrator; that's your login from now on.
+          </p>
+
+          <h2 id="account">Step 3 · Add an AI account <span class="label">browser</span></h2>
+          <p>
+            <em>Settings → Administration → Providers &amp; models</em> → add a
+            Claude or Codex account → <em>Log in</em> and approve in the
+            browser (or paste an API key for a compatible endpoint) → add the
+            model you want. Details: <a href="providers.html">Providers &amp; models</a>.
+          </p>
+
+          <h2 id="agent">Step 4 · Create an agent and chat <span class="label">browser</span></h2>
+          <p>
+            <em>Settings → Agents → New Agent</em>: give it a name, say what
+            it's for, pick the folder it works in. Open it in the chat and ask
+            it something — you're set up. Next: <a href="chat.html">Chat</a>.
+          </p>
+
+          <h2 id="optional">Optional: edit config.yaml</h2>
+          <p>
+            Everything has working defaults, so most installs never touch
+            <code>~/.daymug/config.yaml</code>. Two common first edits — restart
+            the service afterwards:
+          </p>
+          <ul>
+            <li><code>admin.bootstrap_usernames</code> — usernames made admin again on every start, so you can't lock yourself out.</li>
+            <li><code>server.public_url</code> — the address you open DayMug at from other devices, so notification taps land on the right page.</li>
+          </ul>
+          <p>Every field: <a href="config.html">config.yaml</a>.</p>
+
+          <h2 id="expose">Optional: reach it from other devices</h2>
+          <p>
+            DayMug listens on plain HTTP at <code>127.0.0.1</code>. To let
+            anyone outside this machine connect, put your own public-facing
+            layer in front — a reverse proxy, a tunnel you run, or a VPN. Only
+            using it on this computer? Skip this. You can always come back
+            later.
+          </p>
+
+          <h3 id="path-a">Path A · your domain + nginx + TLS cert</h3>
+          <p>
+            Terminate TLS yourself with nginx in front of DayMug; works with any
+            cert authority. <strong>Use this when</strong> you already own a
+            domain, you have a public IP (or your own reverse proxy), or your
+            organisation requires a specific cert chain.
+          </p>
+          <div class="os-gated">
+          <ol class="doc-steps" data-os-only="linux">
+            <li><strong>Point DNS</strong> Point an A / AAAA record at this machine.</li>
+            <li>
+              <strong>Issue a cert with Let's Encrypt</strong>
+              <div class="codeblock"><pre class="codeblock__body"><code>sudo apt install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d chat.example.com</code></pre></div>
+              Certbot installs a renewal timer automatically.
+            </li>
+            <li>
+              <strong>Add an nginx server block</strong>
+              In <code>/etc/nginx/conf.d/daymug.conf</code>. WebSockets need the
+              <code>Upgrade</code> headers and a long
+              <code>proxy_read_timeout</code>, and
+              <strong>raise <code>client_max_body_size</code></strong> — nginx's
+              default of 1&nbsp;MB rejects most file uploads with
+              <code>413 Request Entity Too Large</code>:
+              <div class="codeblock"><pre class="codeblock__body"><code>server {
+  listen 443 ssl http2;
+  server_name chat.example.com;
+  ssl_certificate     /etc/letsencrypt/live/…/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/…/privkey.pem;
+  <span class="cmt"># nginx defaults to 1m; DayMug takes 25 MB per chat</span>
+  <span class="cmt"># attachment and 200 MB per file-browser upload</span>
+  client_max_body_size 200m;
+  location / {
+    proxy_pass http://127.0.0.1:8090;
+    proxy_http_version 1.1;
+    proxy_set_header Host              $host;
+    proxy_set_header Upgrade           $http_upgrade;
+    proxy_set_header Connection        "upgrade";
+    proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_read_timeout 3600s;
+  }
+}</code></pre></div>
+            </li>
+            <li>
+              <strong>Reload</strong>
+              <code>sudo nginx -t &amp;&amp; sudo systemctl reload nginx</code> — done.
+            </li>
+          </ol>
+          <ol class="doc-steps" data-os-only="macos">
+            <li>
+              These steps are written for a Linux server. On a Mac, put the
+              reverse proxy or tunnel you already run in front of
+              <code>127.0.0.1:8090</code>.
+            </li>
+            <li>
+              Keep WebSocket upgrades (<code>Upgrade</code> /
+              <code>Connection</code> headers), a read timeout of at least
+              3600&nbsp;s, and a request-body limit of at least 200&nbsp;MB
+              (nginx: <code>client_max_body_size 200m</code>).
+            </li>
+            <li>Nothing to set up? Take Path B.</li>
+          </ol>
+          </div>
+          <p>
+            Prefer Caddy, Traefik, or a tunnel you run yourself? Same rules
+            apply: keep WebSocket upgrades, a long read timeout, and a
+            body-size limit of at least 200&nbsp;MB.
+          </p>
+
+          <h3 id="path-b">Path B · localhost / LAN only (quickest)</h3>
+          <p>
+            Skip the public-facing layer. DayMug is reachable on this machine
+            and (optionally) on the same network. <strong>Use this when</strong>
+            you're evaluating it, you're the only user, or you're inside an
+            office that already has its own VPN.
+          </p>
+          <ol class="doc-steps">
+            <li>
+              <strong>Open it on this machine</strong>
+              <code>http://127.0.0.1:8090</code>
+            </li>
+            <li>
+              <strong>Share with the LAN</strong>
+              Change <code>server.addr</code> in
+              <code>~/.daymug/config.yaml</code> from
+              <code>127.0.0.1:8090</code> to <code>0.0.0.0:8090</code>, then
+              restart:
+              <div class="os-gated">
+              <div class="codeblock" data-os-only="linux"><pre class="codeblock__body"><code>systemctl --user restart daymug.service</code></pre></div>
+              <div class="codeblock" data-os-only="macos"><pre class="codeblock__body"><code>launchctl kickstart -k "gui/$(id -u)/com.daymug.daymug"</code></pre></div>
+              </div>
+            </li>
+          </ol>
+          <p>
+            No certs, no tunnels, no proxy. Anything outside your LAN still
+            can't see it — that's the whole point.
+          </p>
+
+          <h2 id="source">Build from source</h2>
+          <p>
+            The whole project lives in one repository:
+            <a href="https://github.com/DayMug/DayMug" target="_blank" rel="noopener">github.com/DayMug/DayMug</a>.
+            You need Go 1.25+, Node.js 20+ and pnpm 10+.
+          </p>
+          <div class="codeblock os-gated">
+            <div class="codeblock__head"><span class="tag">build a single binary</span></div>
+<pre class="codeblock__body"><code>git clone https://github.com/DayMug/DayMug.git &amp;&amp; cd DayMug
+cd frontend &amp;&amp; pnpm install &amp;&amp; pnpm build &amp;&amp; cd ..
+rm -rf backend/cmd/server/dist &amp;&amp; cp -r frontend/dist backend/cmd/server/dist
+cd backend &amp;&amp; go build -tags embed_frontend -o daymug ./cmd/server
+
+./daymug bootstrap   <span class="cmt"># lay out ~/.daymug/ and register the service</span>
+<span class="cmt"># or, for a self-contained directory instead of ~/.daymug/:</span>
+./daymug init        <span class="cmt"># writes config.yaml + data/ + users/ here</span></code></pre>
+          </div>
+          <p>
+            For hot-reload development (<code>air</code> + <code>pnpm dev</code>),
+            see <code>docs/development/local-development.md</code> in the repository.
+          </p>
+
+          <nav class="doc-pager" aria-label="Pagination">
+            <a class="doc-pager__link doc-pager__link--next" href="config.html"><span>Next →</span><strong>config.yaml</strong></a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="foot">
+      <div class="container">
+        <div class="foot__grid">
+          <div class="foot__brand">
+            <div style="display: inline-flex; align-items: center; gap: 10px">
+              <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" style="width: 28px; height: 28px" />
+              <span class="brand__name">day<em>mug</em></span>
+            </div>
+            <p>
+              An open-source, self-hosted room for your AI agents — for one
+              person or a whole team. Open it on any device. Keep your work
+              close at hand.
+            </p>
+          </div>
+          <div class="foot__col">
+            <h6>Install &amp; config</h6>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Usage</h6>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Community</h6>
+            <ul>
+              <li><a href="https://github.com/DayMug/DayMug" target="_blank" rel="noopener">Source on GitHub</a></li>
+              <li><a href="https://github.com/DayMug/DayMug/issues" target="_blank" rel="noopener">Report an issue</a></li>
+              <li><a href="mailto:hi@ifconfiger.com">hi@ifconfiger.com</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot__bottom">
+          <span>© 2026 DayMug · open source</span>
+          <span>brewed with care</span>
+        </div>
+      </div>
+    </footer>
+    <script src="script.js"></script>
+  </body>
+</html>

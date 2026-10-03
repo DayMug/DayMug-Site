@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DayMug Command Line — Every daymug Command Explained</title>
+    <meta name="description" content="Every daymug command and flag with examples: check an install, start and stop the service, upgrade, roll back, add users and validate config.yaml." />
+    <link rel="canonical" href="https://www.daymug.com/cli" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DayMug" />
+    <meta property="og:url" content="https://www.daymug.com/cli" />
+    <meta property="og:title" content="DayMug Command Line — Every daymug Command Explained" />
+    <meta property="og:description" content="Every daymug command and flag with examples: check an install, start and stop the service, upgrade, roll back, add users and validate config.yaml." />
+    <meta property="og:image" content="https://www.daymug.com/avatar.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="DayMug Command Line — Every daymug Command Explained" />
+    <meta name="twitter:description" content="Every daymug command and flag with examples: check an install, start and stop the service, upgrade, roll back, add users and validate config.yaml." />
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      // Apply the OS before first paint: the stored choice, else the visitor's
+      // own system — macOS on a Mac, Linux for everyone else (see script.js).
+      document.documentElement.classList.add("os-js");
+      (function () {
+        var os = "";
+        try {
+          os = localStorage.getItem("daymug-os");
+        } catch (e) {}
+        if (os !== "linux" && os !== "macos") {
+          var p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || navigator.userAgent || "";
+          os = /mac/i.test(p) ? "macos" : "linux";
+        }
+        document.documentElement.setAttribute("data-os", os);
+      })();
+    </script>
+  </head>
+
+  <body>
+    <header class="nav">
+      <div class="nav__inner">
+        <a class="brand" href="index.html#top" aria-label="DayMug home">
+          <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" />
+          <span class="brand__name">day<em>mug</em></span>
+        </a>
+        <nav class="nav__links">
+          <a href="index.html#features">Features</a>
+          <a href="install.html" class="nav__keep">Install</a>
+          <div class="nav__menu">
+            <a href="config.html" class="nav__menu-trigger active" aria-haspopup="true">Config<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Config">
+              <a href="config.html" role="menuitem"><strong>config.yaml</strong><span>Server, auth, guardrails, upgrades</span></a>
+              <a href="providers.html" role="menuitem"><strong>Providers &amp; models</strong><span>AI accounts, models, pricing</span></a>
+              <a href="security.html" role="menuitem"><strong>Users &amp; SSO</strong><span>Who signs in, and how</span></a>
+              <a href="operations.html" role="menuitem"><strong>Upgrades &amp; troubleshooting</strong><span>Service, logs, backups</span></a>
+              <a href="cli.html" class="active" aria-current="page" role="menuitem"><strong>Command line</strong><span>Every daymug command</span></a>
+            </div>
+          </div>
+          <div class="nav__menu">
+            <a href="chat.html" class="nav__menu-trigger" aria-haspopup="true">Usage<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Usage">
+              <a href="chat.html" role="menuitem"><strong>Chat</strong><span>Agents, models, working directory</span></a>
+              <a href="files.html" role="menuitem"><strong>Files</strong><span>Uploads and downloads</span></a>
+              <a href="skills.html" role="menuitem"><strong>Skills</strong><span>Account, user and agent skills</span></a>
+              <a href="env.html" role="menuitem"><strong>Environment variables</strong><span>Tokens and settings for tools</span></a>
+              <a href="sandbox.html" role="menuitem"><strong>Sandbox</strong><span>What a jailed agent can reach</span></a>
+              <a href="scheduled-tasks.html" role="menuitem"><strong>Scheduled tasks</strong><span>Run an agent on a cron schedule</span></a>
+              <a href="notifications.html" role="menuitem"><strong>Notifications</strong><span>Browser, Bark and PushDeer</span></a>
+              <a href="im-bots.html" role="menuitem"><strong>IM bots</strong><span>Slack, 飞书, Telegram, 微信</span></a>
+              <a href="case-mode.html" role="menuitem"><strong>Case-file mode</strong><span>Long IM threads that keep going</span></a>
+            </div>
+          </div>
+          <a href="https://github.com/DayMug/DayMug" class="nav__gh nav__keep" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+          <a href="install.html" class="nav__cta">Get started →</a>
+        </nav>
+      </div>
+    </header>
+
+        <main id="top" class="docs">
+      <div class="container docs__inner">
+        <aside class="docs-side" aria-label="Documentation">
+          <div class="docs-side__group">
+            <span class="label">Install</span>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Config</span>
+            <ul>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html" class="active" aria-current="page">Command line</a>
+                <ul>
+                  <li><a href="#tasks">Common tasks</a></li>
+                  <li><a href="#commands">All commands</a></li>
+                  <li><a href="#installer">Installer options</a></li>
+                  <li><a href="#env">Environment &amp; files</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Usage</span>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+        </aside>
+
+        <article class="doc">
+          <span class="doc__eyebrow">Config · Command line</span>
+          <h1>The <em>command line.</em></h1>
+          <p class="doc__lede">
+            Day-to-day, everything happens in the browser. The
+            <code>daymug</code> command is for the rest: checking an install,
+            upgrading, adding the first user, resetting a password. It lives at
+            <code>~/.daymug/daymug</code> — run it as the same (non-root) user that installed
+            DayMug.
+          </p>
+          <div class="os-switch"></div>
+
+          <h2 id="tasks">Common tasks</h2>
+          <p>Find what you want to do, copy the command.</p>
+          <table class="doc-table">
+            <thead><tr><th>I want to…</th><th>Run</th></tr></thead>
+            <tbody>
+              <tr><td>Check that everything is set up right</td><td><code>~/.daymug/daymug doctor</code></td></tr>
+              <tr><td>See whether the service is running</td><td><code>~/.daymug/daymug status</code></td></tr>
+              <tr><td>Restart after editing <code>config.yaml</code></td><td><span data-os-only="linux"><code>systemctl --user restart daymug.service</code></span><span data-os-only="macos"><code>launchctl kickstart -k "gui/$(id -u)/com.daymug.daymug"</code></span></td></tr>
+              <tr><td>Check <code>config.yaml</code> before restarting</td><td><code>~/.daymug/daymug check-config</code></td></tr>
+              <tr><td>Upgrade to the latest release</td><td><code>~/.daymug/daymug upgrade</code> — or one click in Settings</td></tr>
+              <tr><td>Undo the last upgrade</td><td><code>~/.daymug/daymug upgrade --rollback</code></td></tr>
+              <tr><td>Create a user (or the first admin)</td><td><code>~/.daymug/daymug user add alice --email alice@example.com --admin</code></td></tr>
+              <tr><td>Reset someone's password</td><td><code>~/.daymug/daymug user passwd alice</code></td></tr>
+              <tr><td>See which version is installed</td><td><code>~/.daymug/daymug version</code></td></tr>
+              <tr><td>Remove DayMug</td><td><code>~/.daymug/daymug uninstall</code></td></tr>
+            </tbody>
+          </table>
+
+          <h2 id="commands">All commands</h2>
+          <p>
+            <code>~/.daymug/daymug help</code> prints the same list. Commands that read the
+            database or config take <code>--config PATH</code>; without it they
+            use the <code>config.yaml</code> next to the binary.
+          </p>
+
+          <h3>Check and inspect</h3>
+          <h3 id="cmd-doctor"><code>daymug doctor</code></h3>
+          <p>Checks everything DayMug needs and prints one line per item — ✓ fine, ! warning, ✗ must fix — each failure with the command that fixes it: an agent runtime (Claude Agent SDK or Codex), the config file, the service (installed, enabled, running), lingering on Linux, and whether the server answers. Exits non-zero if anything is ✗. <strong>Run this first when something is wrong.</strong></p>
+          <table class="doc-table">
+            <thead><tr><th>Option</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>--config PATH</code></td><td>Use this config file instead of <code>config.yaml</code> next to the binary (also settable with <code>DAYMUG_CONFIG</code>).</td></tr>
+            </tbody>
+          </table>
+
+          <h3 id="cmd-status"><code>daymug status</code></h3>
+          <p>Shows the state of the background service (systemd user unit on Linux, LaunchAgent on macOS).</p>
+
+          <h3 id="cmd-check-config"><code>daymug check-config</code></h3>
+          <p>Loads and validates <code>config.yaml</code> without starting anything, and stops at the first error. Use it before a restart; the self-upgrade also runs it with the new version before switching.</p>
+          <table class="doc-table">
+            <thead><tr><th>Option</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>--config PATH</code></td><td>Use this config file instead of <code>config.yaml</code> next to the binary (also settable with <code>DAYMUG_CONFIG</code>).</td></tr>
+            </tbody>
+          </table>
+
+          <h3 id="cmd-version"><code>daymug version</code></h3>
+          <p>Prints the installed version. <code>--version</code> and <code>-v</code> work too.</p>
+
+          <h3>Run and stop</h3>
+          <h3 id="cmd-serve"><code>daymug serve</code></h3>
+          <p>Runs the server in the foreground — this is what the background service starts. You rarely need it directly; use the service commands on the <a href="operations.html#service">operations page</a> instead.</p>
+          <p>Ctrl-C stops it. A bare <code>SIGTERM</code> is ignored unless systemd is stopping the unit, so a stray <code>kill</code> from an agent's shell can't take the server down. Set <code>DAYMUG_HONOR_SIGTERM=1</code> for supervisors that only send SIGTERM.</p>
+
+          <h3 id="cmd-stop"><code>daymug stop</code></h3>
+          <p>Gracefully stops a server started from this binary: running tasks get time to finish first.</p>
+          <table class="doc-table">
+            <thead><tr><th>Option</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>--timeout 90s</code></td><td>How long to wait for running work to drain. Default 90s.</td></tr>
+            </tbody>
+          </table>
+
+          <h3>Upgrade</h3>
+          <h3 id="cmd-upgrade"><code>daymug upgrade</code></h3>
+          <p>Downloads the latest release, checks it, swaps the binary and restarts the service. If the new version does not come up healthy in time, the previous one is put back automatically.</p>
+          <table class="doc-table">
+            <thead><tr><th>Option</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>--version vX.Y.Z</code></td><td>Install this exact release instead of the latest — also works to go back to an older one.</td></tr>
+              <tr><td><code>--rollback</code></td><td>Restore the previous binary and restart. Can't be combined with <code>--version</code>.</td></tr>
+              <tr><td><code>--config PATH</code></td><td>Use this config file instead of <code>config.yaml</code> next to the binary (also settable with <code>DAYMUG_CONFIG</code>).</td></tr>
+            </tbody>
+          </table>
+          <div class="codeblock"><pre class="codeblock__body"><code>~/.daymug/daymug upgrade                    <span class="cmt"># latest</span>
+~/.daymug/daymug upgrade --version v1.2.3   <span class="cmt"># a specific release</span>
+~/.daymug/daymug upgrade --rollback         <span class="cmt"># undo the last upgrade</span></code></pre></div>
+
+          <p>
+            <code>daymug upgrade-watchdog</code> also exists; the upgrade starts
+            it by itself to watch the new version. Don't run it by hand.
+          </p>
+
+          <h3>Users</h3>
+          <h3 id="cmd-user-add"><code>daymug user add &lt;username&gt; --email EMAIL</code></h3>
+          <p>Creates a user who can sign in, and asks for their password. The username must be the part of the email before <code>@</code>. Handy for the very first admin, or when the browser is out of reach; normally admins add people under Settings → Administration → Users.</p>
+          <table class="doc-table">
+            <thead><tr><th>Option</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>--email EMAIL</code></td><td>Required. Its part before <code>@</code> must equal the username.</td></tr>
+              <tr><td><code>--admin</code></td><td>Make the user an administrator right away.</td></tr>
+              <tr><td><code>--work-dir PATH</code></td><td>Absolute path of their work folder. Default: <code>users.default_home_root/&lt;username&gt;</code>.</td></tr>
+              <tr><td><code>--config PATH</code></td><td>Use this config file instead of <code>config.yaml</code> next to the binary (also settable with <code>DAYMUG_CONFIG</code>).</td></tr>
+            </tbody>
+          </table>
+          <div class="codeblock"><pre class="codeblock__body"><code>~/.daymug/daymug user add alice --email alice@example.com --admin</code></pre></div>
+
+          <h3 id="cmd-user-passwd"><code>daymug user passwd &lt;username&gt;</code></h3>
+          <p>Sets a new password for a user (asks for it). Use it when someone — including you — is locked out.</p>
+          <table class="doc-table">
+            <thead><tr><th>Option</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>--config PATH</code></td><td>Use this config file instead of <code>config.yaml</code> next to the binary (also settable with <code>DAYMUG_CONFIG</code>).</td></tr>
+            </tbody>
+          </table>
+          <p>Lost admin rights instead of a password? Put the username under <code>admin.bootstrap_usernames</code> in <code>config.yaml</code> and restart — see <a href="config.html#ref-admin">the field reference</a>.</p>
+
+          <h3>Install and remove</h3>
+          <h3 id="cmd-bootstrap"><code>daymug bootstrap</code></h3>
+          <p>What the installer runs for you: checks prerequisites, lays out <code>~/.daymug/</code>, then registers and starts the background service (a running one is restarted on the new binary). Safe to run again — an existing <code>config.yaml</code> is kept.</p>
+          <table class="doc-table">
+            <thead><tr><th>Option</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>--force-config</code></td><td>Write a fresh <code>config.yaml</code> even if one exists.</td></tr>
+              <tr><td><code>--skip-service</code></td><td>Don't register the background service.</td></tr>
+              <tr><td><code>--no-start</code></td><td>Linux: install the service unit but don't enable or start it.</td></tr>
+            </tbody>
+          </table>
+
+          <h3 id="cmd-init"><code>daymug init</code></h3>
+          <p>Creates <code>config.yaml</code>, <code>data/</code> and <code>users/</code> in the current folder — for unusual layouts where you don't want <code>bootstrap</code>.</p>
+          <table class="doc-table">
+            <thead><tr><th>Option</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>--force</code></td><td>Overwrite an existing <code>config.yaml</code>.</td></tr>
+            </tbody>
+          </table>
+
+          <h3 id="cmd-uninstall"><code>daymug uninstall</code></h3>
+          <p>Stops and removes the background service. Your config, database and users' folders in <code>~/.daymug</code> are kept.</p>
+          <table class="doc-table">
+            <thead><tr><th>Option</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>--purge</code></td><td>Also delete the whole install folder — asks first.</td></tr>
+              <tr><td><code>--yes</code></td><td>Don't ask before <code>--purge</code> deletes anything.</td></tr>
+            </tbody>
+          </table>
+
+          <h2 id="installer">Installer options</h2>
+          <p>
+            The one-line installer accepts options after <code>bash -s --</code>.
+            Re-running it is safe: the binary is replaced, your
+            <code>config.yaml</code> is kept.
+          </p>
+          <div class="codeblock"><pre class="codeblock__body"><code>curl -fsSL https://github.com/DayMug/DayMug/releases/latest/download/install.sh | bash -s -- --yes</code></pre></div>
+          <table class="doc-table">
+            <thead><tr><th>Option</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>vX.Y.Z</code></td><td>Install this release instead of the latest.</td></tr>
+              <tr><td><code>--yes</code></td><td>Install missing dependencies (the Claude Agent SDK) without asking.</td></tr>
+              <tr><td><code>--no-deps</code></td><td>Never install dependencies.</td></tr>
+              <tr><td><code>--skip-service</code></td><td>Don't register the background service.</td></tr>
+              <tr><td><code>--no-start</code></td><td>Linux: install the service unit but don't start it.</td></tr>
+            </tbody>
+          </table>
+
+          <h2 id="env">Environment &amp; files</h2>
+          <table class="doc-table">
+            <thead><tr><th>Variable</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>DAYMUG_CONFIG</code></td><td>Path of the config file. Default: <code>config.yaml</code> next to the binary.</td></tr>
+              <tr><td><code>DAYMUG_ADDR</code></td><td>Listen address; overrides <code>server.addr</code>.</td></tr>
+              <tr><td><code>DAYMUG_HONOR_SIGTERM</code></td><td>Set to <code>1</code> to let a plain SIGTERM stop <code>daymug serve</code>.</td></tr>
+            </tbody>
+          </table>
+          <table class="doc-table">
+            <thead><tr><th>Path</th><th>What's there</th></tr></thead>
+            <tbody>
+              <tr><td><code>~/.daymug/daymug</code></td><td>The program</td></tr>
+              <tr><td><code>~/.daymug/config.yaml</code></td><td>Settings — see <a href="config.html">Editing config.yaml</a></td></tr>
+              <tr><td><code>~/.daymug/data/database.db</code></td><td>Database: users, agents, conversations</td></tr>
+              <tr><td><code>~/.daymug/logs/daymug.log</code></td><td>Server log</td></tr>
+              <tr><td><code>~/.daymug/users/</code></td><td>Each user's work folder</td></tr>
+            </tbody>
+          </table>
+
+          <nav class="doc-pager" aria-label="Pagination">
+            <a class="doc-pager__link" href="operations.html"><span>← Previous</span><strong>Upgrades &amp; troubleshooting</strong></a>
+            <a class="doc-pager__link doc-pager__link--next" href="chat.html"><span>Next →</span><strong>Chat</strong></a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="foot">
+      <div class="container">
+        <div class="foot__grid">
+          <div class="foot__brand">
+            <div style="display: inline-flex; align-items: center; gap: 10px">
+              <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" style="width: 28px; height: 28px" />
+              <span class="brand__name">day<em>mug</em></span>
+            </div>
+            <p>
+              An open-source, self-hosted room for your AI agents — for one
+              person or a whole team. Open it on any device. Keep your work
+              close at hand.
+            </p>
+          </div>
+          <div class="foot__col">
+            <h6>Install &amp; config</h6>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Usage</h6>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Community</h6>
+            <ul>
+              <li><a href="https://github.com/DayMug/DayMug" target="_blank" rel="noopener">Source on GitHub</a></li>
+              <li><a href="https://github.com/DayMug/DayMug/issues" target="_blank" rel="noopener">Report an issue</a></li>
+              <li><a href="mailto:hi@ifconfiger.com">hi@ifconfiger.com</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot__bottom">
+          <span>© 2026 DayMug · open source</span>
+          <span>brewed with care</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
