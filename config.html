@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DayMug config.yaml — Configuration Guide and Field Reference</title>
+    <meta name="description" content="Where DayMug&#x27;s config.yaml lives, plus a field-by-field reference for server, auth, sandbox, OIDC and upgrades." />
+    <link rel="canonical" href="https://www.daymug.com/config" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DayMug" />
+    <meta property="og:url" content="https://www.daymug.com/config" />
+    <meta property="og:title" content="DayMug config.yaml — Configuration Guide and Field Reference" />
+    <meta property="og:description" content="Where DayMug&#x27;s config.yaml lives, plus a field-by-field reference for server, auth, sandbox, OIDC and upgrades." />
+    <meta property="og:image" content="https://www.daymug.com/avatar.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="DayMug config.yaml — Configuration Guide and Field Reference" />
+    <meta name="twitter:description" content="Where DayMug&#x27;s config.yaml lives, plus a field-by-field reference for server, auth, sandbox, OIDC and upgrades." />
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      // Apply the OS before first paint: the stored choice, else the visitor's
+      // own system — macOS on a Mac, Linux for everyone else (see script.js).
+      document.documentElement.classList.add("os-js");
+      (function () {
+        var os = "";
+        try {
+          os = localStorage.getItem("daymug-os");
+        } catch (e) {}
+        if (os !== "linux" && os !== "macos") {
+          var p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || navigator.userAgent || "";
+          os = /mac/i.test(p) ? "macos" : "linux";
+        }
+        document.documentElement.setAttribute("data-os", os);
+      })();
+    </script>
+  </head>
+
+  <body>
+    <header class="nav">
+      <div class="nav__inner">
+        <a class="brand" href="index.html#top" aria-label="DayMug home">
+          <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" />
+          <span class="brand__name">day<em>mug</em></span>
+        </a>
+        <nav class="nav__links">
+          <a href="index.html#features">Features</a>
+          <a href="install.html" class="nav__keep">Install</a>
+          <div class="nav__menu">
+            <a href="config.html" class="nav__menu-trigger active" aria-haspopup="true">Config<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Config">
+              <a href="config.html" class="active" aria-current="page" role="menuitem"><strong>config.yaml</strong><span>Server, auth, guardrails, upgrades</span></a>
+              <a href="providers.html" role="menuitem"><strong>Providers &amp; models</strong><span>AI accounts, models, pricing</span></a>
+              <a href="security.html" role="menuitem"><strong>Users &amp; SSO</strong><span>Who signs in, and how</span></a>
+              <a href="operations.html" role="menuitem"><strong>Upgrades &amp; troubleshooting</strong><span>Service, logs, backups</span></a>
+              <a href="cli.html" role="menuitem"><strong>Command line</strong><span>Every daymug command</span></a>
+            </div>
+          </div>
+          <div class="nav__menu">
+            <a href="chat.html" class="nav__menu-trigger" aria-haspopup="true">Usage<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Usage">
+              <a href="chat.html" role="menuitem"><strong>Chat</strong><span>Agents, models, working directory</span></a>
+              <a href="files.html" role="menuitem"><strong>Files</strong><span>Uploads and downloads</span></a>
+              <a href="skills.html" role="menuitem"><strong>Skills</strong><span>Account, user and agent skills</span></a>
+              <a href="env.html" role="menuitem"><strong>Environment variables</strong><span>Tokens and settings for tools</span></a>
+              <a href="sandbox.html" role="menuitem"><strong>Sandbox</strong><span>What a jailed agent can reach</span></a>
+              <a href="scheduled-tasks.html" role="menuitem"><strong>Scheduled tasks</strong><span>Run an agent on a cron schedule</span></a>
+              <a href="notifications.html" role="menuitem"><strong>Notifications</strong><span>Browser, Bark and PushDeer</span></a>
+              <a href="im-bots.html" role="menuitem"><strong>IM bots</strong><span>Slack, 飞书, Telegram, 微信</span></a>
+              <a href="case-mode.html" role="menuitem"><strong>Case-file mode</strong><span>Long IM threads that keep going</span></a>
+            </div>
+          </div>
+          <a href="https://github.com/DayMug/DayMug" class="nav__gh nav__keep" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+          <a href="install.html" class="nav__cta">Get started →</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top" class="docs">
+      <div class="container docs__inner">
+        <aside class="docs-side" aria-label="Documentation">
+          <div class="docs-side__group">
+            <span class="label">Install</span>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Config</span>
+            <ul>
+              <li><a href="config.html" class="active" aria-current="page">config.yaml</a>
+                <ul>
+                  <li><a href="#find">Where the file is</a></li>
+                  <li><a href="#reference">Field reference</a></li>
+                </ul>
+              </li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Usage</span>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+        </aside>
+
+        <article class="doc">
+          <span class="doc__eyebrow">Config · config.yaml</span>
+          <h1>Editing <em>config.yaml.</em></h1>
+          <p class="doc__lede">
+            DayMug reads one YAML file when it starts. This page shows where
+            that file is and what every field does. Restart the service after
+            editing — the file is only read at startup. Provider accounts, users and
+            bots are <strong>not</strong> in this file — they are managed from
+            the web UI.
+          </p>
+
+          <h2 id="find">Where the file is</h2>
+          <p>
+            After a one-line install the file is
+            <code>~/.daymug/config.yaml</code>. DayMug looks for its config in
+            this order and uses the first one that exists:
+          </p>
+          <table class="doc-table">
+            <thead><tr><th>#</th><th>Source</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td><code>--config</code> flag</td><td><code>daymug serve --config /etc/daymug/config.yaml</code></td></tr>
+              <tr><td>2</td><td><code>DAYMUG_CONFIG</code> env var</td><td><code>DAYMUG_CONFIG=/srv/daymug.yaml daymug serve</code></td></tr>
+              <tr><td>3</td><td><code>config.yaml</code> next to the binary</td><td><code>~/.daymug/config.yaml</code> for <code>~/.daymug/daymug</code></td></tr>
+            </tbody>
+          </table>
+          <p>
+            If none of them exists DayMug refuses to start instead of guessing.
+            Lost your file? Grab a fresh, fully commented copy:
+          </p>
+          <div class="codeblock os-gated">
+            <div class="codeblock__head"><span class="tag">start from the template</span>
+              <button class="codeblock__copy" data-copy="curl -fsSL https://github.com/DayMug/DayMug/releases/latest/download/config.example.yaml -o ~/.daymug/config.yaml">copy</button></div>
+<pre class="codeblock__body"><code>curl -fsSL https://github.com/DayMug/DayMug/releases/latest/download/config.example.yaml -o ~/.daymug/config.yaml</code></pre>
+          </div>
+          <p>
+            Want to read every field with its comment first? Open
+            <a href="https://github.com/DayMug/DayMug/blob/main/config.example.yaml" target="_blank" rel="noopener"><code>config.example.yaml</code> on GitHub</a>
+            — it is the same template. <code>daymug bootstrap</code> keeps an existing
+            <code>config.yaml</code> untouched, so re-running the installer is
+            safe.
+          </p>
+
+          <h2 id="reference">Field reference</h2>
+          <p>
+            Every key is optional. The <em>default</em> column is what you get
+            when the key is left out.
+          </p>
+
+          <section class="config-group" id="ref-server">
+            <div class="config-group__head">
+              <span class="config-group__name">server</span>
+              <p class="config-group__summary">Where the process listens and how the outside world addresses it.</p>
+            </div>
+            <div class="config-fields">
+              <div class="config-field"><span class="config-field__key">addr</span><span class="config-field__default">:8080</span><p class="config-field__desc">Listen address. The installer writes <code>127.0.0.1:8090</code>. Use <code>127.0.0.1:&lt;port&gt;</code> behind a proxy on the same host, <code>0.0.0.0:&lt;port&gt;</code> to expose it directly. <code>DAYMUG_ADDR</code> overrides it.</p></div>
+              <div class="config-field"><span class="config-field__key">public_url</span><span class="config-field__default">empty</span><p class="config-field__desc">The URL people open, e.g. <code>https://chat.example.com</code>. <strong>Recommended</strong>: push notifications build their tap-to-open links from it; empty means pushes arrive but tapping them does nothing.</p></div>
+            </div>
+          </section>
+
+          <section class="config-group" id="ref-auth">
+            <div class="config-group__head">
+              <span class="config-group__name">auth</span>
+              <p class="config-group__summary">Browser session lifetime and which login methods are open.</p>
+            </div>
+            <div class="config-fields">
+              <div class="config-field"><span class="config-field__key">session_ttl</span><span class="config-field__default">720h</span><p class="config-field__desc">How long a login stays valid (720h = 30 days).</p></div>
+              <div class="config-field"><span class="config-field__key">cookie_secure</span><span class="config-field__default">false</span><p class="config-field__desc">Force the <code>Secure</code> cookie flag. The flag is already added automatically for HTTPS requests (direct TLS or <code>X-Forwarded-Proto: https</code>). Set <code>true</code> only when TLS ends at a proxy that drops that header. Turning it on over plain HTTP makes login impossible.</p></div>
+              <div class="config-field"><span class="config-field__key">password_login_enabled</span><span class="config-field__default">true</span><p class="config-field__desc">Username + password login. Set <code>false</code> when SSO should be the only way in.</p></div>
+            </div>
+          </section>
+
+          <section class="config-group" id="ref-admin">
+            <div class="config-group__head">
+              <span class="config-group__name">admin</span>
+              <p class="config-group__summary">Recovery hatch for administrator access.</p>
+            </div>
+            <div class="config-fields">
+              <div class="config-field"><span class="config-field__key">bootstrap_usernames</span><span class="config-field__default">[]</span><p class="config-field__desc">Usernames promoted to admin on <strong>every</strong> start. Put your own name here before the first start.</p></div>
+            </div>
+          </section>
+
+          <section class="config-group" id="ref-users">
+            <div class="config-group__head">
+              <span class="config-group__name">users</span>
+              <p class="config-group__summary">Home directories and per-person concurrency.</p>
+            </div>
+            <div class="config-fields">
+              <div class="config-field"><span class="config-field__key">default_home_root</span><span class="config-field__default">~/.daymug/users</span><p class="config-field__desc">New users get <code>&lt;root&gt;/&lt;username&gt;</code> as their work directory. Must resolve to an absolute path. Admins can override a single user's directory in the Users page; the root itself is config-only.</p></div>
+              <div class="config-field"><span class="config-field__key">max_concurrent</span><span class="config-field__default">4</span><p class="config-field__desc">Tasks one person may run at once, across every account and entry point (web, API, IM bots, <code>/compact</code>). Extra tasks queue. Values below 1 mean "use the default".</p></div>
+            </div>
+          </section>
+
+          <section class="config-group" id="ref-runner">
+            <div class="config-group__head">
+              <span class="config-group__name">runner (top-level keys)</span>
+              <p class="config-group__summary">How agent processes are supervised. These three keys sit at the top level of the file, not under a section.</p>
+            </div>
+            <div class="config-fields">
+              <div class="config-field"><span class="config-field__key">runner_stall_timeout</span><span class="config-field__default">10m</span><p class="config-field__desc">After this long with no output, DayMug checks CPU time and session logs for signs of life instead of killing the agent — so a quiet long-running tool survives.</p></div>
+              <div class="config-field"><span class="config-field__key">runner_max_silent_timeout</span><span class="config-field__default">2h</span><p class="config-field__desc">Hard ceiling on one silent stretch, even if the agent still looks busy. Must be ≥ <code>runner_stall_timeout</code>.</p></div>
+              <div class="config-field"><span class="config-field__key">im_run_timeout</span><span class="config-field__default">0s</span><p class="config-field__desc">Wall-clock cap on one turn started from Slack / 飞书 / Telegram / 微信. <code>0s</code> = no cap (the watchdog above still catches stuck turns).</p></div>
+            </div>
+          </section>
+
+          <section class="config-group" id="ref-guardrails">
+            <div class="config-group__head">
+              <span class="config-group__name">guardrails</span>
+              <p class="config-group__summary">Soft reminders for unusually expensive user messages. Counts cover the main agent only (sub-agents are not counted) and reset with every new message. The active task always finishes uninterrupted; the next user message gets one reminder and continues normally. Any threshold set to <code>0</code> is off; negative values are rejected.</p>
+            </div>
+            <div class="config-fields">
+              <div class="config-field"><span class="config-field__key">max_model_calls_per_turn</span><span class="config-field__default">50</span><p class="config-field__desc">Model-request threshold for reminding on the next message.</p></div>
+              <div class="config-field"><span class="config-field__key">max_tool_calls_per_turn</span><span class="config-field__default">100</span><p class="config-field__desc">Tool-invocation threshold for reminding on the next message.</p></div>
+              <div class="config-field"><span class="config-field__key">max_cost_usd_per_turn</span><span class="config-field__default">0</span><p class="config-field__desc">Estimated USD threshold for reminding on the next message. Off by default.</p></div>
+            </div>
+          </section>
+
+          <section class="config-group" id="ref-retention">
+            <div class="config-group__head">
+              <span class="config-group__name">retention</span>
+              <p class="config-group__summary">Automatic cleanup of old data. Every key defaults to <code>0</code>, which turns that cleanup off — nothing is deleted unless you opt in. Conversation sweeps run in the background every 6 hours.</p>
+            </div>
+            <div class="config-fields">
+              <div class="config-field"><span class="config-field__key">inactive_conversations</span><span class="config-field__default">0</span><p class="config-field__desc">Delete conversations with no activity for this long, as if their owner had deleted them. Pinned conversations are kept. E.g. <code>336h</code> = 14 days.</p></div>
+              <div class="config-field"><span class="config-field__key">deleted_conversations</span><span class="config-field__default">0</span><p class="config-field__desc">Permanently erase deleted users, agents and conversations (with their messages) this long after deletion. E.g. <code>168h</code> = 7 days.</p></div>
+              <div class="config-field"><span class="config-field__key">uploads</span><span class="config-field__default">0</span><p class="config-field__desc">Delete uploaded files older than this, the next time something is uploaded to the same folder. Old chats that show them get broken links. E.g. <code>720h</code> = 30 days.</p></div>
+            </div>
+          </section>
+
+          <section class="config-group" id="ref-context">
+            <div class="config-group__head">
+              <span class="config-group__name">context (top-level keys)</span>
+              <p class="config-group__summary">When a long session gets compacted or retired. Both are fractions of the model's context window, so one value means the same on a 200k and a 1M window.</p>
+            </div>
+            <div class="config-fields">
+              <div class="config-field"><span class="config-field__key">auto_compact_ratio</span><span class="config-field__default">0</span><p class="config-field__desc">Run <code>/compact</code> automatically once a finished turn leaves the context at or above this fraction. <code>0</code> = manual only. Must be in [0, 1). 0.6–0.7 is a good start.</p></div>
+              <div class="config-field"><span class="config-field__key">case_rotate_context_ratio</span><span class="config-field__default">0.70</span><p class="config-field__desc">For agents with <em>case-file mode</em> on: retire an IM thread's session past this fraction and restart it from the case document. Range (0, 1). Here <code>0</code> means "use the default", not "off" — turn case mode off on the agent instead.</p></div>
+            </div>
+          </section>
+
+          <section class="config-group" id="ref-sandbox">
+            <div class="config-group__head">
+              <span class="config-group__name">sandbox</span>
+              <p class="config-group__summary">Optional per-process isolation around every agent run.</p>
+            </div>
+            <div class="config-fields">
+              <div class="config-field"><span class="config-field__key">enabled</span><span class="config-field__default">false</span><p class="config-field__desc">Turn isolation on. Only meaningful together with <code>type: bwrap</code>.</p></div>
+              <div class="config-field"><span class="config-field__key">type</span><span class="config-field__default">noop</span><p class="config-field__desc"><code>noop</code> — no isolation; agents can reach whatever the service user can. <code>bwrap</code> — Linux bubblewrap; non-exempt users are confined to their own work directory.</p></div>
+              <div class="config-field"><span class="config-field__key">network</span><span class="config-field__default">true</span><p class="config-field__desc">bwrap only. Lets jailed agents use the network; <code>false</code> starts them offline.</p></div>
+              <div class="config-field"><span class="config-field__key">extra_ro_binds</span><span class="config-field__default">[]</span><p class="config-field__desc">Absolute host paths every jailed agent may <strong>read</strong>, e.g. a shared assets folder.</p></div>
+              <div class="config-field"><span class="config-field__key">extra_rw_binds</span><span class="config-field__default">[]</span><p class="config-field__desc">Absolute host paths every jailed agent may <strong>write</strong>. Keep this list short.</p></div>
+            </div>
+          </section>
+
+          <section class="config-group" id="ref-oidc">
+            <div class="config-group__head">
+              <span class="config-group__name">oidc</span>
+              <p class="config-group__summary">Optional single sign-on via Casdoor or any OpenID Connect provider. With <code>enabled: false</code> every other key is ignored. When enabled, a wrong issuer stops startup so mistakes surface immediately.</p>
+            </div>
+            <div class="config-fields">
+              <div class="config-field"><span class="config-field__key">enabled</span><span class="config-field__default">false</span><p class="config-field__desc">Show the SSO button and accept OIDC logins.</p></div>
+              <div class="config-field"><span class="config-field__key">issuer</span><span class="config-field__default">required*</span><p class="config-field__desc">Issuer URL; endpoints are discovered from <code>/.well-known/openid-configuration</code>.</p></div>
+              <div class="config-field"><span class="config-field__key">client_id</span><span class="config-field__default">required*</span><p class="config-field__desc">OAuth client ID issued by your identity provider.</p></div>
+              <div class="config-field"><span class="config-field__key">client_secret</span><span class="config-field__default">required*</span><p class="config-field__desc">OAuth client secret. Keep the file <code>chmod 600</code>.</p></div>
+              <div class="config-field"><span class="config-field__key">redirect_uri</span><span class="config-field__default">required*</span><p class="config-field__desc">Must equal your public URL + <code>/api/auth/oidc/callback</code>, character for character, and be registered at the IdP.</p></div>
+              <div class="config-field"><span class="config-field__key">scopes</span><span class="config-field__default">openid, profile, email</span><p class="config-field__desc">Keep <code>profile</code> — Casdoor puts groups/roles/permissions on userinfo only with it.</p></div>
+              <div class="config-field"><span class="config-field__key">group_claim · role_claim · permission_claim</span><span class="config-field__default">groups · roles · permissions</span><p class="config-field__desc">Claim names to read. Change only if your IdP uses different keys.</p></div>
+              <div class="config-field"><span class="config-field__key">required_groups · required_roles · required_permissions</span><span class="config-field__default">[]</span><p class="config-field__desc">Access policy. A user needs at least one match in at least one non-empty list. All empty = any authenticated user may enter.</p></div>
+              <div class="config-field"><span class="config-field__key">auto_provision</span><span class="config-field__default">true</span><p class="config-field__desc">Create a local user on first SSO login (matched by email). <code>false</code> = only users an admin created beforehand.</p></div>
+              <div class="config-field"><span class="config-field__key">button_label</span><span class="config-field__default">Sign in with SSO</span><p class="config-field__desc">Text of the SSO button on the login page.</p></div>
+            </div>
+          </section>
+          <p><small>* required only when <code>oidc.enabled</code> is <code>true</code>.</small></p>
+
+          <section class="config-group" id="ref-upgrade">
+            <div class="config-group__head">
+              <span class="config-group__name">upgrade</span>
+              <p class="config-group__summary">Self-upgrade watchdog: which service to restart after swapping the binary, and when to roll back.</p>
+            </div>
+            <div class="config-fields">
+              <div class="config-field"><span class="config-field__key">service</span><span class="config-field__default">daymug</span><p class="config-field__desc">Service unit name.</p></div>
+              <div class="config-field"><span class="config-field__key">service_mode</span><span class="config-field__default">user</span><p class="config-field__desc"><code>user</code> uses <code>systemctl --user</code> (and the macOS LaunchAgent); <code>system</code> for a root-level systemd unit.</p></div>
+              <div class="config-field"><span class="config-field__key">health_path</span><span class="config-field__default">/api/health</span><p class="config-field__desc">Path polled on localhost after a restart. Must start with <code>/</code>.</p></div>
+              <div class="config-field"><span class="config-field__key">health_timeout</span><span class="config-field__default">60s</span><p class="config-field__desc">No healthy answer within this time → the previous binary is restored.</p></div>
+            </div>
+          </section>
+
+          <section class="config-group" id="ref-usage">
+            <div class="config-group__head">
+              <span class="config-group__name">usage</span>
+              <p class="config-group__summary">Settings → Usage: which timezone draws the day boundary, and when a conversation gets flagged. Flags only colour the report. <code>guardrails</code> separately schedules a reminder for the user's next message; neither mechanism interrupts a running task.</p>
+            </div>
+            <div class="config-fields">
+              <div class="config-field"><span class="config-field__key">timezone</span><span class="config-field__default">Asia/Shanghai</span><p class="config-field__desc">IANA name (<code>Europe/Berlin</code>, <code>America/New_York</code>), <code>UTC</code> or <code>Local</code>. A typo stops startup. Changing it does not re-bucket old rows.</p></div>
+              <div class="config-field"><span class="config-field__key">high_model_requests</span><span class="config-field__default">20</span><p class="config-field__desc">Flag a conversation whose busiest turn made more model requests than this.</p></div>
+              <div class="config-field"><span class="config-field__key">high_tool_calls</span><span class="config-field__default">30</span><p class="config-field__desc">Same, for tool calls.</p></div>
+              <div class="config-field"><span class="config-field__key">high_conversation_cost_usd</span><span class="config-field__default">10</span><p class="config-field__desc">Flag a conversation that cost more than this in the selected range.</p></div>
+              <div class="config-field"><span class="config-field__key">context_warning_ratio</span><span class="config-field__default">0.8</span><p class="config-field__desc">Flag a conversation whose context reached this fraction of the window. Between 0 and 1.</p></div>
+            </div>
+          </section>
+
+          <div class="callout">
+            <span class="callout__label">Not in this file</span>
+            <p>
+              The SQLite database is always <code>&lt;binary dir&gt;/data/database.db</code>.
+              Provider accounts, models and prices live in the database and are
+              edited under <a href="providers.html">Providers &amp; models</a>. Users,
+              account bindings and sandbox exemptions are in the Users page;
+              IM bots are attached to agents. An old <code>providers:</code>
+              block in YAML is imported once into an empty database and then
+              ignored — you can delete it.
+            </p>
+          </div>
+
+          <nav class="doc-pager" aria-label="Pagination">
+            <a class="doc-pager__link" href="install.html"><span>← Previous</span><strong>Install</strong></a>
+            <a class="doc-pager__link doc-pager__link--next" href="providers.html"><span>Next →</span><strong>Providers &amp; models</strong></a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="foot">
+      <div class="container">
+        <div class="foot__grid">
+          <div class="foot__brand">
+            <div style="display: inline-flex; align-items: center; gap: 10px">
+              <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" style="width: 28px; height: 28px" />
+              <span class="brand__name">day<em>mug</em></span>
+            </div>
+            <p>
+              An open-source, self-hosted room for your AI agents — for one
+              person or a whole team. Open it on any device. Keep your work
+              close at hand.
+            </p>
+          </div>
+          <div class="foot__col">
+            <h6>Install &amp; config</h6>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Usage</h6>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Community</h6>
+            <ul>
+              <li><a href="https://github.com/DayMug/DayMug" target="_blank" rel="noopener">Source on GitHub</a></li>
+              <li><a href="https://github.com/DayMug/DayMug/issues" target="_blank" rel="noopener">Report an issue</a></li>
+              <li><a href="mailto:hi@ifconfiger.com">hi@ifconfiger.com</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot__bottom">
+          <span>© 2026 DayMug · open source</span>
+          <span>brewed with care</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

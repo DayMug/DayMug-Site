@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Providers &amp; Models — Connect Your AI to DayMug</title>
+    <meta name="description" content="Connect your AI subscription or API key to DayMug, use Anthropic- or OpenAI-compatible endpoints, and set models, token pricing and per-user bindings." />
+    <link rel="canonical" href="https://www.daymug.com/providers" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DayMug" />
+    <meta property="og:url" content="https://www.daymug.com/providers" />
+    <meta property="og:title" content="AI Providers &amp; Models — Connect Your AI to DayMug" />
+    <meta property="og:description" content="Connect your AI subscription or API key to DayMug, use Anthropic- or OpenAI-compatible endpoints, and set models, token pricing and per-user bindings." />
+    <meta property="og:image" content="https://www.daymug.com/avatar.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="AI Providers &amp; Models — Connect Your AI to DayMug" />
+    <meta name="twitter:description" content="Connect your AI subscription or API key to DayMug, use Anthropic- or OpenAI-compatible endpoints, and set models, token pricing and per-user bindings." />
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      // Apply the OS before first paint: the stored choice, else the visitor's
+      // own system — macOS on a Mac, Linux for everyone else (see script.js).
+      document.documentElement.classList.add("os-js");
+      (function () {
+        var os = "";
+        try {
+          os = localStorage.getItem("daymug-os");
+        } catch (e) {}
+        if (os !== "linux" && os !== "macos") {
+          var p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || navigator.userAgent || "";
+          os = /mac/i.test(p) ? "macos" : "linux";
+        }
+        document.documentElement.setAttribute("data-os", os);
+      })();
+    </script>
+  </head>
+
+  <body>
+    <header class="nav">
+      <div class="nav__inner">
+        <a class="brand" href="index.html#top" aria-label="DayMug home">
+          <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" />
+          <span class="brand__name">day<em>mug</em></span>
+        </a>
+        <nav class="nav__links">
+          <a href="index.html#features">Features</a>
+          <a href="install.html" class="nav__keep">Install</a>
+          <div class="nav__menu">
+            <a href="config.html" class="nav__menu-trigger active" aria-haspopup="true">Config<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Config">
+              <a href="config.html" role="menuitem"><strong>config.yaml</strong><span>Server, auth, guardrails, upgrades</span></a>
+              <a href="providers.html" class="active" aria-current="page" role="menuitem"><strong>Providers &amp; models</strong><span>AI accounts, models, pricing</span></a>
+              <a href="security.html" role="menuitem"><strong>Users &amp; SSO</strong><span>Who signs in, and how</span></a>
+              <a href="operations.html" role="menuitem"><strong>Upgrades &amp; troubleshooting</strong><span>Service, logs, backups</span></a>
+              <a href="cli.html" role="menuitem"><strong>Command line</strong><span>Every daymug command</span></a>
+            </div>
+          </div>
+          <div class="nav__menu">
+            <a href="chat.html" class="nav__menu-trigger" aria-haspopup="true">Usage<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Usage">
+              <a href="chat.html" role="menuitem"><strong>Chat</strong><span>Agents, models, working directory</span></a>
+              <a href="files.html" role="menuitem"><strong>Files</strong><span>Uploads and downloads</span></a>
+              <a href="skills.html" role="menuitem"><strong>Skills</strong><span>Account, user and agent skills</span></a>
+              <a href="env.html" role="menuitem"><strong>Environment variables</strong><span>Tokens and settings for tools</span></a>
+              <a href="sandbox.html" role="menuitem"><strong>Sandbox</strong><span>What a jailed agent can reach</span></a>
+              <a href="scheduled-tasks.html" role="menuitem"><strong>Scheduled tasks</strong><span>Run an agent on a cron schedule</span></a>
+              <a href="notifications.html" role="menuitem"><strong>Notifications</strong><span>Browser, Bark and PushDeer</span></a>
+              <a href="im-bots.html" role="menuitem"><strong>IM bots</strong><span>Slack, 飞书, Telegram, 微信</span></a>
+              <a href="case-mode.html" role="menuitem"><strong>Case-file mode</strong><span>Long IM threads that keep going</span></a>
+            </div>
+          </div>
+          <a href="https://github.com/DayMug/DayMug" class="nav__gh nav__keep" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+          <a href="install.html" class="nav__cta">Get started →</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top" class="docs">
+      <div class="container docs__inner">
+        <aside class="docs-side" aria-label="Documentation">
+          <div class="docs-side__group">
+            <span class="label">Install</span>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Config</span>
+            <ul>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html" class="active" aria-current="page">Providers &amp; models</a>
+                <ul>
+                  <li><a href="#types">Pick a provider type</a></li>
+                  <li><a href="#add">Add an account</a></li>
+                  <li><a href="#login">Log in and check an account</a></li>
+                  <li><a href="#compatible">Compatible endpoints</a></li>
+                  <li><a href="#bindings">Give users access</a></li>
+                  <li><a href="#limits">Concurrency, in one picture</a></li>
+                  <li><a href="#upgrade-yaml">Coming from a YAML <code>providers:</code> block?</a></li>
+                </ul>
+              </li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Usage</span>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+        </aside>
+
+        <article class="doc">
+          <span class="doc__eyebrow">Config · Providers</span>
+          <h1>Providers &amp; <em>models.</em></h1>
+          <p class="doc__lede">
+            A <strong>provider account</strong> is one set of AI credentials —
+            a Claude login, a Codex login, or an API key for a compatible
+            endpoint. Accounts, their models and their prices are stored in the
+            database and edited in the browser; saving applies immediately, no
+            restart.
+          </p>
+          <div class="callout callout--tip">
+            <span class="callout__label">Where</span>
+            <p>Sign in as an admin → account menu → <strong>Admin settings → Providers &amp; models</strong>. On a phone: <em>Settings → Administration → Admin Panel</em>.</p>
+          </div>
+
+          <h2 id="types">Pick a provider type</h2>
+          <table class="doc-table">
+            <thead><tr><th>Type</th><th>Use it for</th><th>Credentials</th><th>Credential directory</th></tr></thead>
+            <tbody>
+              <tr><td><code>claude</code></td><td>A Claude (Anthropic) subscription or API account. Runs on the Claude Agent SDK.</td><td>Browser login, or <code>ANTHROPIC_API_KEY</code> in env</td><td>Optional — empty uses the service user's <code>~/.claude</code></td></tr>
+              <tr><td><code>codex</code></td><td>A ChatGPT / OpenAI Codex account. Runs on <code>codex app-server</code>.</td><td>Device-code login</td><td><strong>Required</strong> (becomes <code>CODEX_HOME</code>)</td></tr>
+              <tr><td><code>claude-compatible</code></td><td>Any endpoint that speaks the Anthropic Messages API (gateways, relays, third-party models).</td><td>API key in env</td><td>Optional</td></tr>
+              <tr><td><code>openai-compatible</code></td><td>Any OpenAI-compatible endpoint, driven through Codex.</td><td>API key in env</td><td><strong>Required</strong></td></tr>
+            </tbody>
+          </table>
+          <p>
+            Install what the type needs on the DayMug host first:
+            <code>npm install -g @anthropic-ai/claude-agent-sdk</code> for
+            <code>claude</code>; the <code>claude</code> CLI
+            (<code>npm install -g @anthropic-ai/claude-code</code>) for
+            <code>claude-compatible</code> and for the browser login button;
+            <code>npm install -g @openai/codex</code> for the two Codex types.
+          </p>
+
+          <h2 id="add">Add an account</h2>
+          <ol class="doc-steps">
+            <li>
+              <strong>Click “Add account” and fill in the fields</strong>
+              <table class="doc-table">
+                <tbody>
+                  <tr><td>Account name</td><td>Unique across all types, e.g. <code>team-claude</code>. Shown in bindings and usage.</td></tr>
+                  <tr><td>Provider type</td><td>One of the four above.</td></tr>
+                  <tr><td>Max concurrent</td><td>How many conversations may run on this account at once. Extra work waits in a visible queue. Start with 1–3 for a personal subscription.</td></tr>
+                  <tr><td>Credential directory</td><td>Where the CLI keeps its login. Use one directory per account, e.g. <code>/home/you/.daymug/accounts/team-codex</code>.</td></tr>
+                  <tr><td>Environment variables</td><td>One <code>KEY=value</code> per line, passed only to this account's agent process.</td></tr>
+                </tbody>
+              </table>
+            </li>
+            <li>
+              <strong>Save</strong> — the account must be saved before you can
+              add models or log in.
+            </li>
+            <li>
+              <strong>Add models</strong> — type the model ids this account may
+              use. The first one is the default for new conversations; reorder
+              with the arrows. DayMug ships no built-in list, so an account
+              with no models offers nothing to pick. Reference ids for Claude:
+              <code>claude-opus-5-5</code>, <code>claude-sonnet-5</code>,
+              <code>claude-haiku-5</code>.
+            </li>
+            <li>
+              <strong>Set the summary model</strong> — required for any account
+              with models. It writes conversation titles and runs
+              <code>/compact</code>; a small, cheap model is ideal
+              (e.g. <code>claude-haiku-5</code>).
+            </li>
+            <li>
+              <strong>Log in and check</strong> — see below.
+            </li>
+          </ol>
+          <p>
+            The <strong>first account in the list</strong> is the default
+            provider for new conversations. Reorder accounts with the arrows.
+          </p>
+
+          <h2 id="login">Log in and check an account</h2>
+          <p>
+            Each account has an <strong>Account status</strong> panel.
+            <em>Check account</em> reads the login state and sends one real
+            test message on the default model, so it also catches an expired
+            token or a model the account can't use.
+          </p>
+          <ul>
+            <li>
+              <strong><code>claude</code></strong> — click <em>Log in</em>. A
+              terminal opens in the browser running <code>claude auth login</code>
+              with this account's credential directory: open the printed URL,
+              approve, paste the code back.
+            </li>
+            <li>
+              <strong><code>codex</code></strong> — <em>Log in</em> runs
+              <code>codex login --device-auth</code>: open the link, enter the
+              one-time code.
+            </li>
+            <li>
+              <strong>Compatible types</strong> have no login; the API key in
+              the environment variables is the credential. <em>Check account</em>
+              makes one real call to the endpoint.
+            </li>
+          </ul>
+          <p>Prefer the shell? The same thing, run as the service user:</p>
+          <div class="codeblock"><pre class="codeblock__body"><code>CLAUDE_CONFIG_DIR=~/.daymug/accounts/team-claude claude auth login
+CODEX_HOME=~/.daymug/accounts/team-codex codex login --device-auth</code></pre></div>
+
+          <h2 id="compatible">Compatible endpoints</h2>
+          <p>Put the endpoint and key in the account's environment variables.</p>
+          <h3>claude-compatible</h3>
+          <div class="codeblock"><pre class="codeblock__body"><code><span class="key">ANTHROPIC_BASE_URL</span>=<span class="str">https://api.example.com/anthropic</span>
+<span class="key">ANTHROPIC_AUTH_TOKEN</span>=<span class="str">sk-…</span>
+<span class="cmt"># optional: map Claude Code's built-in tiers to the endpoint's model ids</span>
+<span class="key">ANTHROPIC_MODEL</span>=<span class="str">vendor-model-pro</span>
+<span class="key">ANTHROPIC_DEFAULT_SONNET_MODEL</span>=<span class="str">vendor-model-pro</span>
+<span class="key">ANTHROPIC_DEFAULT_OPUS_MODEL</span>=<span class="str">vendor-model-pro</span>
+<span class="key">ANTHROPIC_DEFAULT_HAIKU_MODEL</span>=<span class="str">vendor-model-lite</span></code></pre></div>
+          <h3>openai-compatible</h3>
+          <div class="codeblock"><pre class="codeblock__body"><code><span class="cmt"># credential directory is required, e.g. /home/you/.daymug/accounts/qwen</span>
+<span class="key">OPENAI_BASE_URL</span>=<span class="str">https://dashscope.aliyuncs.com/compatible-mode/v1</span>
+<span class="key">OPENAI_API_KEY</span>=<span class="str">sk-…</span></code></pre></div>
+          <p>Then add the model ids that endpoint actually serves and set a summary model.</p>
+          <div class="callout callout--warn">
+            <span class="callout__label">Set prices for compatible endpoints</span>
+            <p>
+              DayMug has no price list for third-party models. Until you
+              enter per-model rates under <strong>Token pricing</strong> (same
+              page, USD per million tokens), turns on
+              <code>claude-compatible</code> / <code>openai-compatible</code>
+              accounts are recorded at $0 — which also means the
+              <code>max_cost_usd_per_turn</code> reminder never triggers for them.
+            </p>
+          </div>
+
+          <h2 id="bindings">Give users access</h2>
+          <p>
+            An account is only usable by people who are bound to it. In
+            <strong>Admin settings → Users</strong>, edit a user
+            (or select several and use the batch toolbar) and pick an account
+            per provider type. A user can hold several accounts of the same
+            type; one is their default, and a conversation can be pinned to any
+            of the others.
+          </p>
+          <ul>
+            <li>No binding for a type = that user can't start conversations of that type. There's no silent fallback to someone else's account.</li>
+            <li>Revoking a binding takes effect on the next turn, even for conversations already pinned to it.</li>
+            <li>Many users can share one account: <em>Max concurrent</em> caps it, and the rest queue fairly (whoever used the least in the last hour goes next).</li>
+            <li>IM bots spread new threads across every bound account that serves the bot's model, skipping ones that are rate-limited.</li>
+          </ul>
+
+          <h2 id="limits">Concurrency, in one picture</h2>
+          <table class="doc-table">
+            <thead><tr><th>Limit</th><th>Set in</th><th>Scope</th></tr></thead>
+            <tbody>
+              <tr><td>Max concurrent (account)</td><td>Providers &amp; models</td><td>Conversations running on one credential at once</td></tr>
+              <tr><td><code>users.max_concurrent</code></td><td><a href="config.html#ref-users">config.yaml</a></td><td>Tasks one person runs at once, across every account</td></tr>
+              <tr><td><code>guardrails.*</code></td><td><a href="config.html#ref-guardrails">config.yaml</a></td><td>Work one message may cause before the next-message reminder</td></tr>
+            </tbody>
+          </table>
+
+          <h2 id="upgrade-yaml">Coming from a YAML <code>providers:</code> block?</h2>
+          <p>
+            Older releases kept accounts in <code>config.yaml</code>. On the
+            first start with an empty provider table, DayMug imports that block
+            (and the even older <code>claude_accounts:</code>) into the
+            database once. After that the database wins; delete the block from
+            YAML to avoid confusion. The retired <code>mimo</code> type is
+            migrated to <code>claude-compatible</code> automatically.
+          </p>
+
+          <nav class="doc-pager" aria-label="Pagination">
+            <a class="doc-pager__link" href="config.html"><span>← Previous</span><strong>config.yaml</strong></a>
+            <a class="doc-pager__link doc-pager__link--next" href="security.html"><span>Next →</span><strong>Users &amp; SSO</strong></a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="foot">
+      <div class="container">
+        <div class="foot__grid">
+          <div class="foot__brand">
+            <div style="display: inline-flex; align-items: center; gap: 10px">
+              <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" style="width: 28px; height: 28px" />
+              <span class="brand__name">day<em>mug</em></span>
+            </div>
+            <p>
+              An open-source, self-hosted room for your AI agents — for one
+              person or a whole team. Open it on any device. Keep your work
+              close at hand.
+            </p>
+          </div>
+          <div class="foot__col">
+            <h6>Install &amp; config</h6>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Usage</h6>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Community</h6>
+            <ul>
+              <li><a href="https://github.com/DayMug/DayMug" target="_blank" rel="noopener">Source on GitHub</a></li>
+              <li><a href="https://github.com/DayMug/DayMug/issues" target="_blank" rel="noopener">Report an issue</a></li>
+              <li><a href="mailto:hi@ifconfiger.com">hi@ifconfiger.com</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot__bottom">
+          <span>© 2026 DayMug · open source</span>
+          <span>brewed with care</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

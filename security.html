@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Users &amp; SSO — Who Can Sign In to DayMug</title>
+    <meta name="description" content="Manage DayMug users, admins and work directories, enable OIDC single sign-on with Casdoor or any OpenID provider, and expose the server safely." />
+    <link rel="canonical" href="https://www.daymug.com/security" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DayMug" />
+    <meta property="og:url" content="https://www.daymug.com/security" />
+    <meta property="og:title" content="Users &amp; SSO — Who Can Sign In to DayMug" />
+    <meta property="og:description" content="Manage DayMug users, admins and work directories, enable OIDC single sign-on with Casdoor or any OpenID provider, and expose the server safely." />
+    <meta property="og:image" content="https://www.daymug.com/avatar.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Users &amp; SSO — Who Can Sign In to DayMug" />
+    <meta name="twitter:description" content="Manage DayMug users, admins and work directories, enable OIDC single sign-on with Casdoor or any OpenID provider, and expose the server safely." />
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      // Apply the OS before first paint: the stored choice, else the visitor's
+      // own system — macOS on a Mac, Linux for everyone else (see script.js).
+      document.documentElement.classList.add("os-js");
+      (function () {
+        var os = "";
+        try {
+          os = localStorage.getItem("daymug-os");
+        } catch (e) {}
+        if (os !== "linux" && os !== "macos") {
+          var p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || navigator.userAgent || "";
+          os = /mac/i.test(p) ? "macos" : "linux";
+        }
+        document.documentElement.setAttribute("data-os", os);
+      })();
+    </script>
+  </head>
+
+  <body>
+    <header class="nav">
+      <div class="nav__inner">
+        <a class="brand" href="index.html#top" aria-label="DayMug home">
+          <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" />
+          <span class="brand__name">day<em>mug</em></span>
+        </a>
+        <nav class="nav__links">
+          <a href="index.html#features">Features</a>
+          <a href="install.html" class="nav__keep">Install</a>
+          <div class="nav__menu">
+            <a href="config.html" class="nav__menu-trigger active" aria-haspopup="true">Config<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Config">
+              <a href="config.html" role="menuitem"><strong>config.yaml</strong><span>Server, auth, guardrails, upgrades</span></a>
+              <a href="providers.html" role="menuitem"><strong>Providers &amp; models</strong><span>AI accounts, models, pricing</span></a>
+              <a href="security.html" class="active" aria-current="page" role="menuitem"><strong>Users &amp; SSO</strong><span>Who signs in, and how</span></a>
+              <a href="operations.html" role="menuitem"><strong>Upgrades &amp; troubleshooting</strong><span>Service, logs, backups</span></a>
+              <a href="cli.html" role="menuitem"><strong>Command line</strong><span>Every daymug command</span></a>
+            </div>
+          </div>
+          <div class="nav__menu">
+            <a href="chat.html" class="nav__menu-trigger" aria-haspopup="true">Usage<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Usage">
+              <a href="chat.html" role="menuitem"><strong>Chat</strong><span>Agents, models, working directory</span></a>
+              <a href="files.html" role="menuitem"><strong>Files</strong><span>Uploads and downloads</span></a>
+              <a href="skills.html" role="menuitem"><strong>Skills</strong><span>Account, user and agent skills</span></a>
+              <a href="env.html" role="menuitem"><strong>Environment variables</strong><span>Tokens and settings for tools</span></a>
+              <a href="sandbox.html" role="menuitem"><strong>Sandbox</strong><span>What a jailed agent can reach</span></a>
+              <a href="scheduled-tasks.html" role="menuitem"><strong>Scheduled tasks</strong><span>Run an agent on a cron schedule</span></a>
+              <a href="notifications.html" role="menuitem"><strong>Notifications</strong><span>Browser, Bark and PushDeer</span></a>
+              <a href="im-bots.html" role="menuitem"><strong>IM bots</strong><span>Slack, 飞书, Telegram, 微信</span></a>
+              <a href="case-mode.html" role="menuitem"><strong>Case-file mode</strong><span>Long IM threads that keep going</span></a>
+            </div>
+          </div>
+          <a href="https://github.com/DayMug/DayMug" class="nav__gh nav__keep" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+          <a href="install.html" class="nav__cta">Get started →</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top" class="docs">
+      <div class="container docs__inner">
+        <aside class="docs-side" aria-label="Documentation">
+          <div class="docs-side__group">
+            <span class="label">Install</span>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Config</span>
+            <ul>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html" class="active" aria-current="page">Users &amp; SSO</a>
+                <ul>
+                  <li><a href="#users">Users and admins</a></li>
+                  <li><a href="#sso">Single sign-on (OIDC)</a></li>
+                  <li><a href="#exposure">Exposing it safely</a></li>
+                </ul>
+              </li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Usage</span>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+        </aside>
+
+        <article class="doc">
+          <span class="doc__eyebrow">Config · Users &amp; SSO</span>
+          <h1>Users &amp; <em>sign-in.</em></h1>
+          <p class="doc__lede">
+            DayMug works for one person or many. This page covers who can sign in,
+            how they sign in, and how to put the server on the network safely.
+            Keeping one person's agent out of another person's files is the
+            <a href="sandbox.html">sandbox</a>'s job.
+          </p>
+
+          <div class="callout callout--warn">
+            <span class="callout__label">Read this first</span>
+            <p>
+              Agents run real shell commands as the user DayMug runs as. Without
+              the <a href="sandbox.html">bubblewrap sandbox</a>, every agent can read
+              and write everything that user can — including other people's
+              work directories and DayMug's own database. Only share an
+              unsandboxed instance with people you'd give a shell account to.
+            </p>
+          </div>
+
+          <h2 id="users">Users and admins</h2>
+          <p>
+            The first person to open an empty instance creates the first
+            administrator. After that, admins manage everyone under
+            <strong>Admin settings → Users</strong>: create users,
+            reset passwords, set work directories, grant provider accounts and
+            choose each user's sandbox mode — one at a time or in bulk.
+          </p>
+          <p>From the shell, as the service user:</p>
+          <div class="codeblock os-gated"><pre class="codeblock__body"><code>~/.daymug/daymug user add alice --email alice@example.com          <span class="cmt"># prompts for a password</span>
+~/.daymug/daymug user add bob --email bob@example.com --admin       <span class="cmt"># admin right away</span>
+~/.daymug/daymug user passwd alice                                  <span class="cmt"># reset a password</span></code></pre></div>
+          <ul>
+            <li><strong>Work directory</strong> — each user starts in <code>&lt;users.default_home_root&gt;/&lt;username&gt;</code> (default <code>~/.daymug/users/alice</code>). Admins can point a user elsewhere; each conversation can also pick its own folder.</li>
+            <li><strong>Admin recovery</strong> — anyone listed in <code>admin.bootstrap_usernames</code> is made admin again on every start. See <a href="config.html#ref-admin">the field reference</a>.</li>
+            <li><strong>Personal environment</strong> — every user can set <code>KEY=value</code> lines in <strong>Settings → Advanced</strong>. They reach all of that user's agents and override the provider account's values of the same name — handy for personal tokens (<code>GITHUB_TOKEN</code>, …). See <a href="env.html">Environment variables</a>.</li>
+            <li><strong>Concurrency</strong> — <code>users.max_concurrent</code> (default 4) caps how many tasks one person runs at once.</li>
+          </ul>
+
+          <h2 id="sso">Single sign-on (OIDC)</h2>
+          <p>
+            DayMug speaks standard OpenID Connect (authorization code flow with
+            state and nonce). The examples here use Casdoor; any
+            standards-compliant OpenID Connect provider should work the same way.
+          </p>
+          <ol class="doc-steps">
+            <li>
+              <strong>Register an application at your IdP</strong>
+              Redirect URL: <code>https://&lt;your DayMug URL&gt;/api/auth/oidc/callback</code>.
+              Grant types: authorization code (+ refresh token). Scopes:
+              <code>openid profile email</code>. Note the client id and secret.
+            </li>
+            <li>
+              <strong>Add the <code>oidc</code> block to config.yaml</strong>
+              <div class="codeblock"><pre class="codeblock__body"><code><span class="key">oidc</span>:
+  <span class="key">enabled</span>: <span class="str">true</span>
+  <span class="key">issuer</span>: <span class="str">https://sso.example.com</span>
+  <span class="key">client_id</span>: <span class="str">"daymug"</span>
+  <span class="key">client_secret</span>: <span class="str">"…"</span>
+  <span class="key">redirect_uri</span>: <span class="str">https://chat.example.com/api/auth/oidc/callback</span>
+  <span class="key">scopes</span>: [<span class="str">openid</span>, <span class="str">profile</span>, <span class="str">email</span>]
+  <span class="key">required_groups</span>: [<span class="str">engineering</span>]   <span class="cmt"># who may enter; empty = everyone at the IdP</span>
+  <span class="key">auto_provision</span>: <span class="str">true</span>               <span class="cmt"># create local users on first login</span>
+  <span class="key">button_label</span>: <span class="str">"Sign in with Company SSO"</span></code></pre></div>
+            </li>
+            <li>
+              <strong>Restart and test in a private window.</strong> DayMug
+              contacts the issuer at startup; if discovery fails the service
+              won't start, and the log says why.
+            </li>
+            <li>
+              <strong>Optionally switch off passwords</strong> with
+              <code>auth.password_login_enabled: false</code> — after you've
+              confirmed an SSO admin can sign in.
+            </li>
+          </ol>
+          <h3>Who gets in</h3>
+          <ul>
+            <li>Users are matched to local accounts <strong>by email</strong>.</li>
+            <li><code>required_groups</code>, <code>required_roles</code>, <code>required_permissions</code>: a user needs at least one match in at least one non-empty list. With all three empty, anyone who can authenticate at the IdP may enter.</li>
+            <li><code>auto_provision: false</code> turns SSO into a closed allow-list: an admin creates the user (with the same email) first.</li>
+            <li>Claims are read from <code>groups</code> / <code>roles</code> / <code>permissions</code>; rename with <code>group_claim</code>, <code>role_claim</code>, <code>permission_claim</code> if your IdP differs.</li>
+          </ul>
+          <div class="callout">
+            <span class="callout__label">Casdoor tips</span>
+            <p>Token format <strong>JWT-Standard</strong>; keep the <code>profile</code> scope, otherwise groups, roles and permissions don't appear on userinfo. A Casdoor <em>Permission</em> named <code>daymug</code> plus <code>required_permissions: [daymug]</code> is a clean way to gate access.</p>
+          </div>
+
+          <h2 id="exposure">Exposing it safely</h2>
+          <ul>
+            <li>Keep <code>server.addr</code> on <code>127.0.0.1</code> and put TLS in front (your own reverse proxy) — see <a href="install.html#expose">Install → reach it</a>.</li>
+            <li>Set <code>server.public_url</code> to the HTTPS address.</li>
+            <li>If your proxy doesn't forward <code>X-Forwarded-Proto</code>, set <code>auth.cookie_secure: true</code>.</li>
+            <li>Keep <code>config.yaml</code> private (<code>chmod 600</code>) when it holds an OIDC secret. Provider keys and bot tokens live in the SQLite database under <code>~/.daymug/data/</code> — protect and back up that directory accordingly.</li>
+            <li>Set <a href="config.html#ref-guardrails">guardrails</a> so an unusually expensive task is called out before the user's next message.</li>
+          </ul>
+
+          <nav class="doc-pager" aria-label="Pagination">
+            <a class="doc-pager__link" href="providers.html"><span>← Previous</span><strong>Providers &amp; models</strong></a>
+            <a class="doc-pager__link doc-pager__link--next" href="operations.html"><span>Next →</span><strong>Upgrades &amp; troubleshooting</strong></a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="foot">
+      <div class="container">
+        <div class="foot__grid">
+          <div class="foot__brand">
+            <div style="display: inline-flex; align-items: center; gap: 10px">
+              <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" style="width: 28px; height: 28px" />
+              <span class="brand__name">day<em>mug</em></span>
+            </div>
+            <p>
+              An open-source, self-hosted room for your AI agents — for one
+              person or a whole team. Open it on any device. Keep your work
+              close at hand.
+            </p>
+          </div>
+          <div class="foot__col">
+            <h6>Install &amp; config</h6>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Usage</h6>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Community</h6>
+            <ul>
+              <li><a href="https://github.com/DayMug/DayMug" target="_blank" rel="noopener">Source on GitHub</a></li>
+              <li><a href="https://github.com/DayMug/DayMug/issues" target="_blank" rel="noopener">Report an issue</a></li>
+              <li><a href="mailto:hi@ifconfiger.com">hi@ifconfiger.com</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot__bottom">
+          <span>© 2026 DayMug · open source</span>
+          <span>brewed with care</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

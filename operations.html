@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upgrades &amp; Troubleshooting — Run DayMug Day to Day</title>
+    <meta name="description" content="Start, stop and upgrade DayMug with automatic rollback, find the logs, back up the SQLite database, and fix the most common installation and runtime problems." />
+    <link rel="canonical" href="https://www.daymug.com/operations" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DayMug" />
+    <meta property="og:url" content="https://www.daymug.com/operations" />
+    <meta property="og:title" content="Upgrades &amp; Troubleshooting — Run DayMug Day to Day" />
+    <meta property="og:description" content="Start, stop and upgrade DayMug with automatic rollback, find the logs, back up the SQLite database, and fix the most common installation and runtime problems." />
+    <meta property="og:image" content="https://www.daymug.com/avatar.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Upgrades &amp; Troubleshooting — Run DayMug Day to Day" />
+    <meta name="twitter:description" content="Start, stop and upgrade DayMug with automatic rollback, find the logs, back up the SQLite database, and fix the most common installation and runtime problems." />
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      // Apply the OS before first paint: the stored choice, else the visitor's
+      // own system — macOS on a Mac, Linux for everyone else (see script.js).
+      document.documentElement.classList.add("os-js");
+      (function () {
+        var os = "";
+        try {
+          os = localStorage.getItem("daymug-os");
+        } catch (e) {}
+        if (os !== "linux" && os !== "macos") {
+          var p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || navigator.userAgent || "";
+          os = /mac/i.test(p) ? "macos" : "linux";
+        }
+        document.documentElement.setAttribute("data-os", os);
+      })();
+    </script>
+  </head>
+
+  <body>
+    <header class="nav">
+      <div class="nav__inner">
+        <a class="brand" href="index.html#top" aria-label="DayMug home">
+          <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" />
+          <span class="brand__name">day<em>mug</em></span>
+        </a>
+        <nav class="nav__links">
+          <a href="index.html#features">Features</a>
+          <a href="install.html" class="nav__keep">Install</a>
+          <div class="nav__menu">
+            <a href="config.html" class="nav__menu-trigger active" aria-haspopup="true">Config<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Config">
+              <a href="config.html" role="menuitem"><strong>config.yaml</strong><span>Server, auth, guardrails, upgrades</span></a>
+              <a href="providers.html" role="menuitem"><strong>Providers &amp; models</strong><span>AI accounts, models, pricing</span></a>
+              <a href="security.html" role="menuitem"><strong>Users &amp; SSO</strong><span>Who signs in, and how</span></a>
+              <a href="operations.html" class="active" aria-current="page" role="menuitem"><strong>Upgrades &amp; troubleshooting</strong><span>Service, logs, backups</span></a>
+              <a href="cli.html" role="menuitem"><strong>Command line</strong><span>Every daymug command</span></a>
+            </div>
+          </div>
+          <div class="nav__menu">
+            <a href="chat.html" class="nav__menu-trigger" aria-haspopup="true">Usage<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Usage">
+              <a href="chat.html" role="menuitem"><strong>Chat</strong><span>Agents, models, working directory</span></a>
+              <a href="files.html" role="menuitem"><strong>Files</strong><span>Uploads and downloads</span></a>
+              <a href="skills.html" role="menuitem"><strong>Skills</strong><span>Account, user and agent skills</span></a>
+              <a href="env.html" role="menuitem"><strong>Environment variables</strong><span>Tokens and settings for tools</span></a>
+              <a href="sandbox.html" role="menuitem"><strong>Sandbox</strong><span>What a jailed agent can reach</span></a>
+              <a href="scheduled-tasks.html" role="menuitem"><strong>Scheduled tasks</strong><span>Run an agent on a cron schedule</span></a>
+              <a href="notifications.html" role="menuitem"><strong>Notifications</strong><span>Browser, Bark and PushDeer</span></a>
+              <a href="im-bots.html" role="menuitem"><strong>IM bots</strong><span>Slack, 飞书, Telegram, 微信</span></a>
+              <a href="case-mode.html" role="menuitem"><strong>Case-file mode</strong><span>Long IM threads that keep going</span></a>
+            </div>
+          </div>
+          <a href="https://github.com/DayMug/DayMug" class="nav__gh nav__keep" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+          <a href="install.html" class="nav__cta">Get started →</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top" class="docs">
+      <div class="container docs__inner">
+        <aside class="docs-side" aria-label="Documentation">
+          <div class="docs-side__group">
+            <span class="label">Install</span>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Config</span>
+            <ul>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html" class="active" aria-current="page">Upgrades &amp; troubleshooting</a>
+                <ul>
+                  <li><a href="#service">Service commands</a></li>
+                  <li><a href="#upgrade">Upgrade</a></li>
+                  <li><a href="#logs">Logs</a></li>
+                  <li><a href="#backup">Back up and move</a></li>
+                  <li><a href="#troubleshoot">Troubleshooting</a></li>
+                </ul>
+              </li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Usage</span>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+        </aside>
+
+        <article class="doc">
+          <span class="doc__eyebrow">Config · Upgrades</span>
+          <h1>Upgrades &amp; <em>troubleshooting.</em></h1>
+          <p class="doc__lede">
+            Everything you need once DayMug is running: service commands,
+            one-click upgrades with automatic rollback, logs, backups, and a
+            table of the problems people actually hit.
+          </p>
+          <div class="os-switch"></div>
+
+          <h2 id="service">Service commands</h2>
+          <div class="os-gated">
+          <div data-os-only="linux">
+          <table class="doc-table">
+            <thead><tr><th>Task</th><th>Linux (systemd user unit)</th></tr></thead>
+            <tbody>
+              <tr><td>Start</td><td><code>systemctl --user start daymug.service</code></td></tr>
+              <tr><td>Restart (after editing config)</td><td><code>systemctl --user restart daymug.service</code></td></tr>
+              <tr><td>Status</td><td><code>systemctl --user status daymug.service</code></td></tr>
+              <tr><td>Stop</td><td><code>systemctl --user stop daymug.service</code></td></tr>
+            </tbody>
+          </table>
+          <p>
+            The installer enables the unit, but systemd only starts a user's
+            services at boot once that user has logged in — unless lingering
+            is on. Turn it on once so DayMug comes back by itself after a
+            reboot (<code>daymug doctor</code> warns while it's off):
+          </p>
+          <div class="codeblock"><pre class="codeblock__body"><code>sudo loginctl enable-linger "$USER"</code></pre></div>
+          </div>
+          <div data-os-only="macos">
+          <table class="doc-table">
+            <thead><tr><th>Task</th><th>macOS (LaunchAgent)</th></tr></thead>
+            <tbody>
+              <tr><td>Start</td><td>starts automatically when the user logs in</td></tr>
+              <tr><td>Restart (after editing config)</td><td><code>launchctl kickstart -k "gui/$(id -u)/com.daymug.daymug"</code></td></tr>
+              <tr><td>Status</td><td><code>launchctl print "gui/$(id -u)/com.daymug.daymug"</code></td></tr>
+              <tr><td>Stop</td><td><code>launchctl bootout "gui/$(id -u)/com.daymug.daymug"</code></td></tr>
+            </tbody>
+          </table>
+          <p>The LaunchAgent only runs while the installing user is logged in — a Mac sitting at the login screen won't serve DayMug.</p>
+          </div>
+          </div>
+          <h3 id="manual">Running it by hand</h3>
+          <p>
+            Installed with <code>--skip-service</code>, or running under your
+            own supervisor? Start with <code>~/.daymug/daymug serve</code> and
+            stop with <kbd>Ctrl-C</kbd> or <code>~/.daymug/daymug stop</code>
+            (it only stops the instance this binary started).
+          </p>
+          <div class="callout callout--warn">
+            <span class="callout__label">A plain <code>kill</code> is ignored</span>
+            <p>
+              Agents run as the same OS user as DayMug, so a stray
+              <code>pkill</code> from an agent could otherwise take the whole
+              server down. A bare SIGTERM is therefore logged and ignored
+              (<code>systemctl stop/restart</code> and the macOS LaunchAgent are
+              unaffected). Supervisors that only send SIGTERM — supervisord,
+              pm2, container runtimes — need
+              <code>DAYMUG_HONOR_SIGTERM=1</code> in the environment.
+            </p>
+          </div>
+
+          <h2 id="upgrade">Upgrade</h2>
+          <p>
+            Admins open <strong>Admin settings → Global</strong> and
+            click <em>Check for updates</em>. DayMug downloads the new binary,
+            verifies its SHA-256, swaps it in atomically and restarts. A
+            watchdog then polls <code>/api/health</code>; if the new version
+            isn't healthy within <code>upgrade.health_timeout</code> (60 s), the
+            previous binary is restored automatically.
+          </p>
+          <div class="codeblock os-gated"><pre class="codeblock__body"><code>~/.daymug/daymug upgrade                     <span class="cmt"># latest release</span>
+~/.daymug/daymug upgrade --version v1.2.3    <span class="cmt"># a specific tag (also downgrades)</span>
+~/.daymug/daymug upgrade --rollback          <span class="cmt"># back to the previous binary</span>
+~/.daymug/daymug version</code></pre></div>
+          <p>
+            Re-running the one-line installer also upgrades in place and keeps
+            your <code>config.yaml</code>. Running under a different unit name
+            or a root-level systemd unit? Adjust the
+            <a href="config.html#ref-upgrade"><code>upgrade</code></a> block.
+            Started by hand with <code>daymug serve</code>? The binary is still
+            replaced, but nothing restarts it — restart it yourself.
+          </p>
+
+          <h2 id="logs">Logs</h2>
+          <div class="os-gated">
+          <div class="codeblock" data-os-only="linux"><pre class="codeblock__body"><code>tail -f ~/.daymug/logs/daymug.log                     <span class="cmt"># always there; rotated at 32 MiB, 5 kept</span>
+journalctl --user -u daymug.service -f                <span class="cmt"># note the --user</span></code></pre></div>
+          <div class="codeblock" data-os-only="macos"><pre class="codeblock__body"><code>tail -f ~/.daymug/logs/daymug.log                     <span class="cmt"># always there; rotated at 32 MiB, 5 kept</span>
+tail -f ~/.daymug/logs/daymug.err.log                 <span class="cmt"># LaunchAgent stderr</span>
+log stream --predicate 'process == "daymug"'</code></pre></div>
+          </div>
+          <p data-os-only="linux">
+            <code>journalctl -u daymug</code> without <code>--user</code> looks at
+            the system manager and shows nothing — the service is a user unit.
+          </p>
+          <p>
+            The startup log prints the effective guardrail values, the Agent SDK
+            version and path, and any <code>SECURITY:</code> warnings.
+          </p>
+
+          <h2 id="backup">Back up and move</h2>
+          <p>
+            All state lives under <code>~/.daymug/</code>: the binary,
+            <code>config.yaml</code>, <code>data/database.db</code>
+            (conversations, users, provider accounts, bot tokens) and
+            <code>users/</code> (everyone's work directories). Provider logins
+            live in the credential directories you chose for each account.
+          </p>
+          <div class="os-gated">
+          <div class="codeblock" data-os-only="linux"><pre class="codeblock__body"><code>systemctl --user stop daymug.service
+tar czf daymug-backup-$(date +%F).tgz -C ~ .daymug
+systemctl --user start daymug.service</code></pre></div>
+          <div class="codeblock" data-os-only="macos"><pre class="codeblock__body"><code>launchctl bootout "gui/$(id -u)/com.daymug.daymug"
+tar czf daymug-backup-$(date +%F).tgz -C ~ .daymug
+launchctl bootstrap "gui/$(id -u)" ~/Library/LaunchAgents/com.daymug.daymug.plist</code></pre></div>
+          </div>
+          <p>
+            To move to a new machine, restore the archive into the same home
+            path, install the prerequisites, and run
+            <code>~/.daymug/daymug bootstrap</code> to register the service
+            again. Treat the archive as secret — it contains credentials.
+          </p>
+
+          <h2 id="troubleshoot">Troubleshooting</h2>
+          <table class="doc-table">
+            <thead><tr><th>Symptom</th><th>Fix</th></tr></thead>
+            <tbody>
+              <tr><td>Service exits right after start</td><td>Read the last lines of <code>~/.daymug/logs/daymug.log</code> — usually a config error. Check it against the <a href="config.html#reference">field reference</a>.</td></tr>
+              <tr><td>Claude Agent SDK missing</td><td><code>npm install -g @anthropic-ai/claude-agent-sdk</code>. Installed somewhere unusual? Set <code>DAYMUG_CLAUDE_AGENT_SDK_MODULE</code> to the absolute path of <code>sdk.mjs</code>.</td></tr>
+              <tr><td>“a claude-compatible provider requires the Claude CLI”</td><td>Install or upgrade <code>claude</code>: <code>npm install -g @anthropic-ai/claude-code</code>.</td></tr>
+              <tr><td>Codex or <code>app-server</code> missing</td><td><code>npm install -g @openai/codex</code>, then check <code>codex app-server --help</code>.</td></tr>
+              <tr><td>A new chat says no provider is available</td><td>Add an account in <a href="providers.html">Providers &amp; models</a> <em>and</em> bind it to the user in the Users page.</td></tr>
+              <tr><td>Model picker is empty</td><td>The account has no models — add model ids and a summary model.</td></tr>
+              <tr><td>Saving a Codex account: “config_dir required”</td><td>Codex-family accounts need a credential directory (<code>CODEX_HOME</code>).</td></tr>
+              <tr><td>Can't log in over HTTP after enabling HTTPS settings</td><td><code>auth.cookie_secure: true</code> makes browsers drop the cookie on plain HTTP. Set it back to <code>false</code> or use HTTPS.</td></tr>
+              <tr><td>Chat disconnects behind a proxy</td><td>Forward WebSocket headers (<code>Upgrade</code>, <code>Connection</code>) and set <code>proxy_read_timeout</code> ≥ 3600s.</td></tr>
+              <tr><td>Notification taps don't open the conversation</td><td>Set <code>server.public_url</code>.</td></tr>
+              <tr><td>Every admin got demoted</td><td>Add your username to <code>admin.bootstrap_usernames</code>, restart.</td></tr>
+              <tr><td>Forgot a password</td><td><code>~/.daymug/daymug user passwd &lt;username&gt;</code></td></tr>
+              <tr><td>Sandbox enabled but agents still see everything</td><td><code>bwrap</code> isn't installed (look for <code>SECURITY:</code> in the log), or the user is set to <em>Unrestricted</em>, or they're an admin.</td></tr>
+              <tr><td>Upgrade left the site down</td><td>The watchdog rolls back on its own; if not, <code>~/.daymug/daymug upgrade --rollback</code>.</td></tr>
+              <tr><td>Container / supervisor can't stop DayMug</td><td>Set <code>DAYMUG_HONOR_SIGTERM=1</code>, or stop it with <code>daymug stop</code> / SIGINT.</td></tr>
+              <tr><td>Nothing running after a reboot</td><td><span data-os-only="linux">Linux: <code>systemctl --user start daymug.service</code> (or enable it, above).</span> <span data-os-only="macos">macOS: log in as the installing user.</span></td></tr>
+            </tbody>
+          </table>
+          <p>
+            Still stuck? Open an issue on
+            <a href="https://github.com/DayMug/DayMug/issues" target="_blank" rel="noopener">GitHub</a>
+            with your OS, <code>daymug version</code> and the relevant log lines
+            (remove tokens and secrets first).
+          </p>
+
+          <nav class="doc-pager" aria-label="Pagination">
+            <a class="doc-pager__link" href="security.html"><span>← Previous</span><strong>Users &amp; SSO</strong></a>
+            <a class="doc-pager__link doc-pager__link--next" href="cli.html"><span>Next →</span><strong>Command line</strong></a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="foot">
+      <div class="container">
+        <div class="foot__grid">
+          <div class="foot__brand">
+            <div style="display: inline-flex; align-items: center; gap: 10px">
+              <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" style="width: 28px; height: 28px" />
+              <span class="brand__name">day<em>mug</em></span>
+            </div>
+            <p>
+              An open-source, self-hosted room for your AI agents — for one
+              person or a whole team. Open it on any device. Keep your work
+              close at hand.
+            </p>
+          </div>
+          <div class="foot__col">
+            <h6>Install &amp; config</h6>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Usage</h6>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Community</h6>
+            <ul>
+              <li><a href="https://github.com/DayMug/DayMug" target="_blank" rel="noopener">Source on GitHub</a></li>
+              <li><a href="https://github.com/DayMug/DayMug/issues" target="_blank" rel="noopener">Report an issue</a></li>
+              <li><a href="mailto:hi@ifconfiger.com">hi@ifconfiger.com</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot__bottom">
+          <span>© 2026 DayMug · open source</span>
+          <span>brewed with care</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

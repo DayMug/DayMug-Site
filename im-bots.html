@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DayMug IM Bots — AI Agents in Slack, Feishu, Telegram, WeChat</title>
+    <meta name="description" content="Set up DayMug AI bots in Slack, Feishu (飞书), Telegram and WeChat (微信) step by step, with channel rules, mentions and allow-lists." />
+    <link rel="canonical" href="https://www.daymug.com/im-bots" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DayMug" />
+    <meta property="og:url" content="https://www.daymug.com/im-bots" />
+    <meta property="og:title" content="DayMug IM Bots — AI Agents in Slack, Feishu, Telegram, WeChat" />
+    <meta property="og:description" content="Set up DayMug AI bots in Slack, Feishu (飞书), Telegram and WeChat (微信) step by step, with channel rules, mentions and allow-lists." />
+    <meta property="og:image" content="https://www.daymug.com/avatar.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="DayMug IM Bots — AI Agents in Slack, Feishu, Telegram, WeChat" />
+    <meta name="twitter:description" content="Set up DayMug AI bots in Slack, Feishu (飞书), Telegram and WeChat (微信) step by step, with channel rules, mentions and allow-lists." />
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      // Apply the OS before first paint: the stored choice, else the visitor's
+      // own system — macOS on a Mac, Linux for everyone else (see script.js).
+      document.documentElement.classList.add("os-js");
+      (function () {
+        var os = "";
+        try {
+          os = localStorage.getItem("daymug-os");
+        } catch (e) {}
+        if (os !== "linux" && os !== "macos") {
+          var p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || navigator.userAgent || "";
+          os = /mac/i.test(p) ? "macos" : "linux";
+        }
+        document.documentElement.setAttribute("data-os", os);
+      })();
+    </script>
+  </head>
+
+  <body>
+    <header class="nav">
+      <div class="nav__inner">
+        <a class="brand" href="index.html#top" aria-label="DayMug home">
+          <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" />
+          <span class="brand__name">day<em>mug</em></span>
+        </a>
+        <nav class="nav__links">
+          <a href="index.html#features">Features</a>
+          <a href="install.html" class="nav__keep">Install</a>
+          <div class="nav__menu">
+            <a href="config.html" class="nav__menu-trigger" aria-haspopup="true">Config<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Config">
+              <a href="config.html" role="menuitem"><strong>config.yaml</strong><span>Server, auth, guardrails, upgrades</span></a>
+              <a href="providers.html" role="menuitem"><strong>Providers &amp; models</strong><span>AI accounts, models, pricing</span></a>
+              <a href="security.html" role="menuitem"><strong>Users &amp; SSO</strong><span>Who signs in, and how</span></a>
+              <a href="operations.html" role="menuitem"><strong>Upgrades &amp; troubleshooting</strong><span>Service, logs, backups</span></a>
+              <a href="cli.html" role="menuitem"><strong>Command line</strong><span>Every daymug command</span></a>
+            </div>
+          </div>
+          <div class="nav__menu">
+            <a href="chat.html" class="nav__menu-trigger active" aria-haspopup="true">Usage<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Usage">
+              <a href="chat.html" role="menuitem"><strong>Chat</strong><span>Agents, models, working directory</span></a>
+              <a href="files.html" role="menuitem"><strong>Files</strong><span>Uploads and downloads</span></a>
+              <a href="skills.html" role="menuitem"><strong>Skills</strong><span>Account, user and agent skills</span></a>
+              <a href="env.html" role="menuitem"><strong>Environment variables</strong><span>Tokens and settings for tools</span></a>
+              <a href="sandbox.html" role="menuitem"><strong>Sandbox</strong><span>What a jailed agent can reach</span></a>
+              <a href="scheduled-tasks.html" role="menuitem"><strong>Scheduled tasks</strong><span>Run an agent on a cron schedule</span></a>
+              <a href="notifications.html" role="menuitem"><strong>Notifications</strong><span>Browser, Bark and PushDeer</span></a>
+              <a href="im-bots.html" class="active" aria-current="page" role="menuitem"><strong>IM bots</strong><span>Slack, 飞书, Telegram, 微信</span></a>
+              <a href="case-mode.html" role="menuitem"><strong>Case-file mode</strong><span>Long IM threads that keep going</span></a>
+            </div>
+          </div>
+          <a href="https://github.com/DayMug/DayMug" class="nav__gh nav__keep" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+          <a href="install.html" class="nav__cta">Get started →</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top" class="docs">
+      <div class="container docs__inner">
+        <aside class="docs-side" aria-label="Documentation">
+          <div class="docs-side__group">
+            <span class="label">Install</span>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Config</span>
+            <ul>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Usage</span>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html" class="active" aria-current="page">IM bots</a>
+                <ul>
+                  <li><a href="#where">Where bots are configured</a></li>
+                  <li><a href="#slack">Slack</a></li>
+                  <li><a href="#feishu">飞书 / Feishu</a></li>
+                  <li><a href="#telegram">Telegram</a></li>
+                  <li><a href="#wechat">微信 / WeChat</a></li>
+                  <li><a href="#rules">Channel rules</a></li>
+                  <li><a href="#behaviour">What users will see</a></li>
+                  <li><a href="#handoff">Bot hand-offs</a></li>
+                  <li><a href="#troubleshoot">Troubleshooting</a></li>
+                </ul>
+              </li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+        </aside>
+
+        <article class="doc">
+          <span class="doc__eyebrow">Usage · IM bots</span>
+          <h1>Talk to agents in <em>your chat app.</em></h1>
+          <p class="doc__lede">
+            Attach Slack, 飞书, Telegram or 微信 bots to any agent. Every
+            connection is <strong>outbound</strong> — Socket Mode, long
+            connection, long polling — so you need no public URL, webhook or
+            open port. Each thread becomes a DayMug conversation you can also
+            open in the browser.
+          </p>
+
+          <h2 id="where">Where bots are configured</h2>
+          <ol class="doc-steps">
+            <li><strong>Open the agent</strong> <em>Settings → Agents →</em> pick an agent (or <em>New Agent</em>) → edit.</li>
+            <li><strong>Add a bot</strong> under the attached-bots section, choose the platform, and fill in the credentials from the platform guides below.</li>
+            <li><strong>Click “Test connection”</strong> — a read-only check of the token, required scopes/permissions and platform switches. It sends nothing to any channel.</li>
+            <li><strong>Write channel rules</strong> — without a matching rule the bot stays silent (see <a href="#rules">Channel rules</a>).</li>
+            <li><strong>Save</strong> — bots hot-reload; only bots whose credentials changed reconnect. The page shows each bot's live status, and failed connections retry automatically (5 s → 5 min back-off).</li>
+          </ol>
+          <p>Per-bot options:</p>
+          <table class="doc-table">
+            <tbody>
+              <tr><td>Model</td><td>Model for new threads. Empty = the agent's default.</td></tr>
+              <tr><td>Maximum conversation duration</td><td>Default <code>12h</code>, counted from a thread's first message. After it, the next message in the same thread starts a fresh conversation and session. <code>0</code> = reuse forever.</td></tr>
+              <tr><td>Unconfigured reply</td><td>Sent when someone @-mentions or DMs the bot where no rule covers them. No agent runs.</td></tr>
+              <tr><td>Unauthorized reply</td><td>Sent when someone outside <code>allowed_user_ids</code> @-mentions or DMs the bot.</td></tr>
+            </tbody>
+          </table>
+
+          <h2 id="slack">Slack</h2>
+          <ol>
+            <li>Create an app at <a href="https://api.slack.com/apps" target="_blank" rel="noopener">api.slack.com/apps</a> and turn on <strong>Socket Mode</strong>. Generate an <strong>App-Level Token</strong> (<code>xapp-…</code>) with <code>connections:write</code>.</li>
+            <li>Bot Token Scopes: <code>app_mentions:read</code>, <code>chat:write</code>, <code>channels:history</code>, <code>groups:history</code>, <code>im:history</code>, <code>users:read</code>. Add <code>files:read</code> to receive files and <code>files:write</code> to send the agent's files back.</li>
+            <li>Event Subscriptions → bot events: <code>app_mention</code>, <code>message.channels</code>, <code>message.groups</code>, <code>message.im</code>.</li>
+            <li>Install the app to get the <strong>Bot Token</strong> (<code>xoxb-…</code>) and invite the bot to your channels.</li>
+            <li>In DayMug paste both tokens: <em>Bot token</em> = <code>xoxb-…</code>, <em>App-level token</em> = <code>xapp-…</code>.</li>
+          </ol>
+
+          <h2 id="feishu">飞书 / Feishu</h2>
+          <ol>
+            <li>In the Feishu Open Platform create a <strong>custom app</strong> (企业自建应用) and enable the <strong>bot</strong> capability.</li>
+            <li>Permissions: <code>im:message</code>, <code>im:message:send_as_bot</code>, <code>im:resource</code>. Add <code>im:message.group_msg</code> to read every group message (needed for <code>auto_reply</code>). Optional: <code>contact:user.base:readonly</code> so group members show by name instead of open_id.</li>
+            <li>Events: subscribe to <code>im.message.receive_v1</code> using <strong>long connection</strong> (长连接) mode.</li>
+            <li>Publish a version, get it approved, and add the bot to your groups.</li>
+            <li>In DayMug paste the <em>App ID</em> and <em>App secret</em>.</li>
+          </ol>
+
+          <h2 id="telegram">Telegram</h2>
+          <ol>
+            <li>Message <a href="https://t.me/BotFather" target="_blank" rel="noopener">@BotFather</a>, run <code>/newbot</code>, and copy the token (<code>123456789:AA…</code>).</li>
+            <li>Run <code>/setprivacy</code> → your bot → <strong>Disable</strong> if you want <code>auto_reply</code> in groups. With privacy on, the bot only sees commands, @-mentions and replies to itself — enough for mention-only use.</li>
+            <li>If the bot ever had a webhook, delete it (<code>deleteWebhook</code>). A leftover webhook blocks long polling; "Test connection" reports it.</li>
+            <li>Add the bot to your group. Enable <strong>Topics</strong> in the group if you want one conversation per topic.</li>
+          </ol>
+          <p>
+            Conversations are per chat (a DM, a group, or a forum topic).
+            Telegram offers no history API, so a new conversation starts at the
+            triggering message, and messages sent while DayMug was restarting are
+            not answered afterwards.
+          </p>
+
+          <h2 id="wechat">微信 / WeChat</h2>
+          <p>
+            WeChat uses Tencent's iLink Bot protocol: you pair a personal WeChat
+            account by scanning a QR code — no official account, WeCom or
+            reverse-engineered client involved.
+          </p>
+          <ol>
+            <li>Add a bot, choose <strong>WeChat</strong>, and click pair. Scan the QR code with WeChat on your phone and confirm.</li>
+            <li>New WeChat bots start with a rule that lets anyone DM the bot: <code>[{ "channel": "dm", "allowed_user_ids": ["*"] }]</code>. Replace <code>"*"</code> with your own user id to keep it private.</li>
+            <li>WeChat has no threads. Send <code>/new</code> to start a fresh conversation, or <code>/new your question</code> to start one and ask in the same message. Other <code>/commands</code> pass through to the agent.</li>
+          </ol>
+          <div class="callout callout--warn">
+            <span class="callout__label">Heads-up</span>
+            <p>
+              WeChat can't edit sent messages, so you'll see a typing indicator
+              and queue notices rather than a live-updating reply. If the
+              session expires (<code>errcode -14</code>) you need to scan again.
+              Group chats are not verified to work — treat WeChat as 1:1.
+            </p>
+          </div>
+
+          <h2 id="rules">Channel rules</h2>
+          <p>
+            Each bot has a JSON array of rules deciding <strong>where</strong>
+            it answers and <strong>who</strong> may trigger it.
+            <strong>No matching rule means no reply</strong> — in groups and
+            DMs alike. Matching order: exact channel id first, then
+            <code>"dm"</code> / <code>"*"</code>; an exact rule with
+            <code>"enabled": false</code> overrides <code>"*"</code>.
+          </p>
+          <div class="codeblock">
+            <div class="codeblock__head"><span class="tag">channel rules · example</span></div>
+<pre class="codeblock__body"><code>[
+  {
+    <span class="key">"channel"</span>: <span class="str">"C0123456789"</span>,
+    <span class="key">"require_mention"</span>: <span class="str">true</span>,
+    <span class="key">"allowed_user_ids"</span>: [<span class="str">"U0123456789"</span>, <span class="str">"U0987654321"</span>],
+    <span class="key">"extra_prompt"</span>: <span class="str">"This is the on-call channel. Keep answers short."</span>
+  },
+  { <span class="key">"channel"</span>: <span class="str">"*"</span>,  <span class="key">"auto_reply"</span>: <span class="str">true</span> },
+  { <span class="key">"channel"</span>: <span class="str">"dm"</span>, <span class="key">"enabled"</span>: <span class="str">false</span> }
+]</code></pre>
+          </div>
+          <table class="doc-table">
+            <thead><tr><th>Field</th><th>Default</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>channel</code></td><td>required</td><td>Exact id — Slack <code>C…</code>/<code>G…</code>, Feishu <code>oc_…</code>, Telegram chat id (supergroups are negative, <code>-100…</code>). <code>"*"</code> = every group, <code>"dm"</code> = every direct message.</td></tr>
+              <tr><td><code>enabled</code></td><td><code>true</code></td><td>Switch a rule off without deleting it.</td></tr>
+              <tr><td><code>require_mention</code></td><td><code>true</code></td><td>In groups, only messages that @-mention the bot trigger it — including replies inside an existing thread. DMs are unaffected.</td></tr>
+              <tr><td><code>auto_reply</code></td><td><code>false</code></td><td>Answer every message in the channel; overrides <code>require_mention</code>.</td></tr>
+              <tr><td><code>allowed_user_ids</code></td><td>everyone</td><td>Only these platform user ids may trigger the agent. <code>["*"]</code> or omitted = no restriction.</td></tr>
+              <tr><td><code>extra_prompt</code></td><td>—</td><td>Extra system-prompt text for this channel only.</td></tr>
+              <tr><td><code>allow_bot_mentions</code></td><td><code>false</code></td><td>Let other bots trigger this one (bot hand-offs, below).</td></tr>
+              <tr><td><code>bot_mention_limit</code></td><td><code>3</code></td><td>Max bot-triggered runs per thread within the window. <code>0</code> blocks them.</td></tr>
+              <tr><td><code>bot_mention_window_minutes</code></td><td><code>30</code></td><td>Length of that sliding window.</td></tr>
+            </tbody>
+          </table>
+          <h3>Common rule sets</h3>
+          <div class="codeblock"><pre class="codeblock__body"><code><span class="cmt">// Answer @-mentions in every group and in DMs</span>
+[{ "channel": "*" }, { "channel": "dm" }]
+
+<span class="cmt">// Private assistant: only you, only in DMs</span>
+[{ "channel": "dm", "allowed_user_ids": ["U0123456789"] }]
+
+<span class="cmt">// One busy channel answers everything; everywhere else stays quiet</span>
+[{ "channel": "C0123456789", "auto_reply": true }]</code></pre></div>
+
+          <h2 id="behaviour">What users will see</h2>
+          <ul>
+            <li><strong>Threads = conversations.</strong> A top-level message starts a thread; everything stays in it. When a bot is first @-mentioned in an existing Slack or Feishu thread, the earlier messages are pulled in as context.</li>
+            <li><strong>Live progress.</strong> Slack and Feishu show a progress message that updates with the agent's thinking and draft, then post the final answer as a fresh message that @-mentions the asker. Telegram edits one message in place.</li>
+            <li><strong>Queues are visible.</strong> If the account is busy, the bot says how many tasks are ahead and updates as the queue moves.</li>
+            <li><strong>Files.</strong> Images and files up to 25 MiB are passed to the agent. Files the agent publishes are uploaded back to the thread (Slack 1 GiB, Feishu 30 MiB, Telegram 50 MiB, WeChat 25 MiB).</li>
+            <li><strong>Web and chat stay in sync.</strong> Open the same conversation in DayMug; messages you send from the web are mirrored into the thread.</li>
+            <li>A new message to the same bot in the same thread cancels its previous run and answers the latest one.</li>
+          </ul>
+
+          <h2 id="handoff">Bot hand-offs</h2>
+          <p>
+            One agent can pass a thread to another — e.g. a coder bot hands its
+            result to a reviewer bot. Turn on <code>allow_bot_mentions</code>
+            in the <em>receiving</em> bot's rule for that channel. The sending
+            agent ends its reply with a single line:
+          </p>
+          <div class="codeblock"><pre class="codeblock__body"><code>[HANDOFF @Reviewer] Please review the change in PR #42 against the spec in docs/spec.md</code></pre></div>
+          <p>
+            DayMug posts a real @-mention as the sending bot and starts the
+            receiving agent in its own conversation. Make the instruction
+            self-contained — the receiver does not see the sender's narrative.
+            <code>bot_mention_limit</code> stops two bots looping forever.
+          </p>
+
+          <h2 id="troubleshoot">Troubleshooting</h2>
+          <table class="doc-table">
+            <thead><tr><th>Symptom</th><th>Check</th></tr></thead>
+            <tbody>
+              <tr><td>Bot answers with the <em>unconfigured reply</em> (default: “🙇 不好意思，我还没有在这个会话里开通…”)</td><td>No rule matches — add the channel id, <code>"*"</code>, or <code>"dm"</code>.</td></tr>
+              <tr><td>Bot ignores messages without @</td><td>Expected with <code>require_mention</code>. Use <code>auto_reply</code> (Telegram: also disable privacy mode; Feishu: add <code>im:message.group_msg</code>).</td></tr>
+              <tr><td>Telegram connected but silent</td><td>A leftover webhook — call <code>deleteWebhook</code>. Test connection shows it.</td></tr>
+              <tr><td>Feishu shows open_id instead of names</td><td>Grant <code>contact:user.base:readonly</code>.</td></tr>
+              <tr><td>Image-only message in a mention-only group is ignored</td><td>A bare image can't carry an @. Use <code>auto_reply</code>, or (Slack) add text with the @ in the same message.</td></tr>
+              <tr><td>Long tasks get cut off</td><td><code>im_run_timeout</code> in <a href="config.html#ref-runner">config.yaml</a> — <code>0s</code> means no cap.</td></tr>
+            </tbody>
+          </table>
+
+          <nav class="doc-pager" aria-label="Pagination">
+            <a class="doc-pager__link" href="notifications.html"><span>← Previous</span><strong>Notifications</strong></a>
+            <a class="doc-pager__link doc-pager__link--next" href="case-mode.html"><span>Next →</span><strong>Case-file mode</strong></a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="foot">
+      <div class="container">
+        <div class="foot__grid">
+          <div class="foot__brand">
+            <div style="display: inline-flex; align-items: center; gap: 10px">
+              <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" style="width: 28px; height: 28px" />
+              <span class="brand__name">day<em>mug</em></span>
+            </div>
+            <p>
+              An open-source, self-hosted room for your AI agents — for one
+              person or a whole team. Open it on any device. Keep your work
+              close at hand.
+            </p>
+          </div>
+          <div class="foot__col">
+            <h6>Install &amp; config</h6>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Usage</h6>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Community</h6>
+            <ul>
+              <li><a href="https://github.com/DayMug/DayMug" target="_blank" rel="noopener">Source on GitHub</a></li>
+              <li><a href="https://github.com/DayMug/DayMug/issues" target="_blank" rel="noopener">Report an issue</a></li>
+              <li><a href="mailto:hi@ifconfiger.com">hi@ifconfiger.com</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot__bottom">
+          <span>© 2026 DayMug · open source</span>
+          <span>brewed with care</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

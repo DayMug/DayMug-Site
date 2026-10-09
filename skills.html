@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DayMug Skills — Account, User and Agent Skills for Your AI Agents</title>
+    <meta name="description" content="Give DayMug agents skills (SKILL.md folders) at three levels: a whole AI account, every agent a user owns, or one agent — where each folder goes and how to check it." />
+    <link rel="canonical" href="https://www.daymug.com/skills" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DayMug" />
+    <meta property="og:url" content="https://www.daymug.com/skills" />
+    <meta property="og:title" content="DayMug Skills — Account, User and Agent Skills for Your AI Agents" />
+    <meta property="og:description" content="Give DayMug agents skills (SKILL.md folders) at three levels: a whole AI account, every agent a user owns, or one agent — where each folder goes and how to check it." />
+    <meta property="og:image" content="https://www.daymug.com/avatar.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="DayMug Skills — Account, User and Agent Skills for Your AI Agents" />
+    <meta name="twitter:description" content="Give DayMug agents skills (SKILL.md folders) at three levels: a whole AI account, every agent a user owns, or one agent — where each folder goes and how to check it." />
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      // Apply the OS before first paint: the stored choice, else the visitor's
+      // own system — macOS on a Mac, Linux for everyone else (see script.js).
+      document.documentElement.classList.add("os-js");
+      (function () {
+        var os = "";
+        try {
+          os = localStorage.getItem("daymug-os");
+        } catch (e) {}
+        if (os !== "linux" && os !== "macos") {
+          var p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || navigator.userAgent || "";
+          os = /mac/i.test(p) ? "macos" : "linux";
+        }
+        document.documentElement.setAttribute("data-os", os);
+      })();
+    </script>
+  </head>
+
+  <body>
+    <header class="nav">
+      <div class="nav__inner">
+        <a class="brand" href="index.html#top" aria-label="DayMug home">
+          <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" />
+          <span class="brand__name">day<em>mug</em></span>
+        </a>
+        <nav class="nav__links">
+          <a href="index.html#features">Features</a>
+          <a href="install.html" class="nav__keep">Install</a>
+          <div class="nav__menu">
+            <a href="config.html" class="nav__menu-trigger" aria-haspopup="true">Config<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Config">
+              <a href="config.html" role="menuitem"><strong>config.yaml</strong><span>Server, auth, guardrails, upgrades</span></a>
+              <a href="providers.html" role="menuitem"><strong>Providers &amp; models</strong><span>AI accounts, models, pricing</span></a>
+              <a href="security.html" role="menuitem"><strong>Users &amp; SSO</strong><span>Who signs in, and how</span></a>
+              <a href="operations.html" role="menuitem"><strong>Upgrades &amp; troubleshooting</strong><span>Service, logs, backups</span></a>
+              <a href="cli.html" role="menuitem"><strong>Command line</strong><span>Every daymug command</span></a>
+            </div>
+          </div>
+          <div class="nav__menu">
+            <a href="chat.html" class="nav__menu-trigger active" aria-haspopup="true">Usage<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Usage">
+              <a href="chat.html" role="menuitem"><strong>Chat</strong><span>Agents, models, working directory</span></a>
+              <a href="files.html" role="menuitem"><strong>Files</strong><span>Uploads and downloads</span></a>
+              <a href="skills.html" class="active" aria-current="page" role="menuitem"><strong>Skills</strong><span>Account, user and agent skills</span></a>
+              <a href="env.html" role="menuitem"><strong>Environment variables</strong><span>Tokens and settings for tools</span></a>
+              <a href="sandbox.html" role="menuitem"><strong>Sandbox</strong><span>What a jailed agent can reach</span></a>
+              <a href="scheduled-tasks.html" role="menuitem"><strong>Scheduled tasks</strong><span>Run an agent on a cron schedule</span></a>
+              <a href="notifications.html" role="menuitem"><strong>Notifications</strong><span>Browser, Bark and PushDeer</span></a>
+              <a href="im-bots.html" role="menuitem"><strong>IM bots</strong><span>Slack, 飞书, Telegram, 微信</span></a>
+              <a href="case-mode.html" role="menuitem"><strong>Case-file mode</strong><span>Long IM threads that keep going</span></a>
+            </div>
+          </div>
+          <a href="https://github.com/DayMug/DayMug" class="nav__gh nav__keep" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+          <a href="install.html" class="nav__cta">Get started →</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top" class="docs">
+      <div class="container docs__inner">
+        <aside class="docs-side" aria-label="Documentation">
+          <div class="docs-side__group">
+            <span class="label">Install</span>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Config</span>
+            <ul>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Usage</span>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html" class="active" aria-current="page">Skills</a>
+                <ul>
+                  <li><a href="#anatomy">What a skill looks like</a></li>
+                  <li><a href="#levels">The three levels</a></li>
+                  <li><a href="#account">AI account level</a></li>
+                  <li><a href="#user">User level</a></li>
+                  <li><a href="#agent">Agent level</a></li>
+                  <li><a href="#check">Check what an agent sees</a></li>
+                  <li><a href="#old-field">Coming from the old Skills field?</a></li>
+                </ul>
+              </li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+        </aside>
+
+        <article class="doc">
+          <span class="doc__eyebrow">Usage · Skills</span>
+          <h1>Skills, at three <em>levels.</em></h1>
+          <p class="doc__lede">
+            A <strong>skill</strong> is a folder with a <code>SKILL.md</code>
+            file — instructions, and optionally scripts or reference files,
+            that an agent loads only when a task calls for it. DayMug keeps no
+            skills in its database: the Claude and Codex CLIs find them on
+            disk. Where you put the folder decides who gets it — everyone on
+            an AI account, every agent you own, or a single agent.
+          </p>
+
+          <div class="callout callout--tip">
+            <span class="callout__label">Persona or skill?</span>
+            <p>
+              The agent's <strong>Role definition</strong>
+              (<em>Settings → Agents → edit agent → Role &amp; persona</em>) is
+              sent with every turn: who the agent is, how it talks, what it
+              cares about. A skill is a playbook for one kind of job, pulled in
+              only when needed — so it can be long without costing tokens on
+              every reply. Agents used to have a separate free-text
+              <em>Skills</em> box; it is gone, see
+              <a href="#old-field">below</a>.
+            </p>
+          </div>
+
+          <h2 id="anatomy">What a skill looks like</h2>
+          <p>
+            One directory per skill. The directory name and the
+            <code>name</code> field should match; the <code>description</code>
+            is what the agent reads to decide when to use it, so say plainly
+            what it does and when.
+          </p>
+          <div class="codeblock">
+            <div class="codeblock__head"><span class="tag">layout</span></div>
+<pre class="codeblock__body"><code>skills/
+└── release-notes/
+    ├── SKILL.md          <span class="cmt"># required</span>
+    ├── template.md       <span class="cmt"># optional: files SKILL.md refers to</span>
+    └── scripts/
+        └── changelog.sh  <span class="cmt"># optional: scripts the agent may run</span></code></pre>
+          </div>
+          <div class="codeblock">
+            <div class="codeblock__head"><span class="tag">SKILL.md</span></div>
+<pre class="codeblock__body"><code>---
+<span class="key">name</span>: <span class="str">release-notes</span>
+<span class="key">description</span>: <span class="str">Write release notes from the git log. Use for release notes or a changelog.</span>
+---
+
+1. Run scripts/changelog.sh to list commits since the last tag.
+2. Group them as Added / Changed / Fixed, following template.md.
+3. Leave out merge commits and anything touching only tests.</code></pre>
+          </div>
+
+          <h2 id="levels">The three levels</h2>
+          <p>
+            Skills from every level are offered together, so give them
+            distinct names. The directory depends on the provider type of the
+            account a conversation runs on: <code>claude</code> and
+            <code>claude-compatible</code> accounts use the Claude layout,
+            <code>codex</code> and <code>openai-compatible</code> the Codex
+            layout.
+          </p>
+          <table class="doc-table">
+            <thead>
+              <tr><th>Level</th><th>Who gets it</th><th>Claude accounts</th><th>Codex accounts</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><a href="#account">AI account</a></td><td>Every conversation on that provider account, for every user bound to it</td><td><code>&lt;credential dir&gt;/skills/</code></td><td><code>&lt;credential dir&gt;/skills/</code></td></tr>
+              <tr><td><a href="#user">User</a></td><td>Every agent you own</td><td><code>&lt;your home&gt;/.claude/skills/</code></td><td><code>&lt;your home&gt;/.agents/skills/</code> (inside one git repository only)</td></tr>
+              <tr><td><a href="#agent">Agent</a></td><td>That agent's conversations</td><td><code>&lt;agent work dir&gt;/.claude/skills/</code></td><td><code>&lt;agent work dir&gt;/.agents/skills/</code></td></tr>
+            </tbody>
+          </table>
+
+          <h2 id="account">AI account level</h2>
+          <p>
+            For skills everyone on the account should have — conventions,
+            internal tools, house style. Admins only: the folder lives in the
+            account's <strong>credential directory</strong>, the one set on
+            <em>Admin settings → Providers &amp; models</em> (see
+            <a href="providers.html#add">Add an account</a>). DayMug hands that
+            directory to the CLI as <code>CLAUDE_CONFIG_DIR</code> or
+            <code>CODEX_HOME</code>, and both CLIs read
+            <code>skills/</code> inside it.
+          </p>
+          <ol class="doc-steps">
+            <li>
+              <strong>Find the credential directory</strong>
+              Open the account on the Providers page. A <code>claude</code>
+              account with the field left empty uses the service user's
+              <code>~/.claude</code>.
+            </li>
+            <li>
+              <strong>Create the skill there, as the user DayMug runs as</strong>
+              <div class="codeblock"><pre class="codeblock__body"><code>mkdir -p ~/.daymug/accounts/team-claude/skills/release-notes
+$EDITOR ~/.daymug/accounts/team-claude/skills/release-notes/SKILL.md</code></pre></div>
+            </li>
+            <li>
+              <strong>Start a new conversation</strong>
+              Every user bound to the account gets the skill, on every agent.
+              Bound to several accounts? Put a copy in each one that should
+              have it.
+            </li>
+          </ol>
+          <div class="callout callout--warn">
+            <span class="callout__label">Shared means shared</span>
+            <p>
+              Everyone on the account can read these files — the sandbox keeps
+              the credential directory reachable so the CLI can log in. Keep
+              secrets out of account-level skills; pass them as environment
+              variables instead.
+            </p>
+          </div>
+
+          <h2 id="user">User level</h2>
+          <p>
+            For your own habits, across all your agents. Your
+            <strong>home</strong> is the work directory your DayMug user was
+            given — by default <code>~/.daymug/users/&lt;username&gt;</code>
+            (<a href="security.html#users">Users and admins</a>). Every agent
+            you create lives inside it, and the CLIs look for skills in the
+            directories above the one a conversation runs in.
+          </p>
+          <ul>
+            <li>
+              <strong>Claude</strong> — create
+              <code>&lt;your home&gt;/.claude/skills/&lt;name&gt;/SKILL.md</code>.
+              Claude walks up from the conversation's directory and picks up
+              every <code>.claude/skills</code> it passes.
+            </li>
+            <li>
+              <strong>Codex</strong> — create
+              <code>&lt;your home&gt;/.agents/skills/&lt;name&gt;/SKILL.md</code>.
+              Codex only walks up to the root of the git repository the
+              conversation is in, so this works when your home is the
+              repository root (<code>git init</code> in it) and the agent
+              directories below it are not repositories of their own.
+              Otherwise use the agent level.
+            </li>
+          </ul>
+          <div class="callout callout--warn">
+            <span class="callout__label">With the sandbox on</span>
+            <p>
+              A jailed conversation sees only its own working directory
+              (<a href="sandbox.html">Sandbox</a>), so skills in your
+              home above it are out of reach. If your admin runs the sandbox
+              and has not exempted you, use the agent level — or ask for an
+              account-level skill.
+            </p>
+          </div>
+
+          <h2 id="agent">Agent level</h2>
+          <p>
+            For what one agent needs — a project's build and release steps, a
+            report format. The folder goes in the agent's
+            <strong>working directory</strong> (<em>Settings → Agents → edit
+            agent → Working directory</em>). If that directory is a git
+            repository, commit <code>.claude/skills</code> with the project and
+            everyone who clones it gets the same skills.
+          </p>
+          <div class="codeblock">
+            <div class="codeblock__head"><span class="tag">in the agent's working directory</span></div>
+<pre class="codeblock__body"><code>mkdir -p .claude/skills/release-notes
+$EDITOR .claude/skills/release-notes/SKILL.md
+
+<span class="cmt"># the same skills for Codex accounts, without a second copy</span>
+mkdir -p .agents &amp;&amp; ln -s ../.claude/skills .agents/skills</code></pre>
+          </div>
+          <p>
+            No shell on the server? Ask the agent. It can write inside its own
+            working directory even in the sandbox: <em>“Create a skill in
+            .claude/skills/release-notes that writes release notes from the git
+            log: …”</em>. Codex accounts also ship a built-in
+            <code>skill-creator</code> skill for exactly this.
+          </p>
+
+          <h2 id="check">Check what an agent sees</h2>
+          <p>
+            Start a new conversation and ask: <em>“List the names of every
+            skill available to you.”</em> A skill missing from the answer is
+            in the wrong directory, out of the sandbox's reach, or has a
+            <code>SKILL.md</code> without the <code>name</code> /
+            <code>description</code> header.
+          </p>
+
+          <h2 id="old-field">Coming from the old Skills field?</h2>
+          <p>
+            Earlier versions had a free-text <em>Skills</em> box next to the
+            role definition (“Go, Python, TypeScript”). It only added a line to
+            the prompt — the same thing the persona does — so it was removed.
+            On upgrade DayMug appends whatever it held to the agent's role
+            definition under a <code>## Skills</code> heading, so nothing the
+            agent was told is lost. Open <em>Role &amp; persona</em> to tidy it
+            up, and move any step-by-step know-how into a real skill.
+          </p>
+
+          <nav class="doc-pager" aria-label="Pagination">
+            <a class="doc-pager__link" href="files.html"><span>← Previous</span><strong>Files</strong></a>
+            <a class="doc-pager__link doc-pager__link--next" href="env.html"><span>Next →</span><strong>Environment variables</strong></a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="foot">
+      <div class="container">
+        <div class="foot__grid">
+          <div class="foot__brand">
+            <div style="display: inline-flex; align-items: center; gap: 10px">
+              <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" style="width: 28px; height: 28px" />
+              <span class="brand__name">day<em>mug</em></span>
+            </div>
+            <p>
+              An open-source, self-hosted room for your AI agents — for one
+              person or a whole team. Open it on any device. Keep your work
+              close at hand.
+            </p>
+          </div>
+          <div class="foot__col">
+            <h6>Install &amp; config</h6>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Usage</h6>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Community</h6>
+            <ul>
+              <li><a href="https://github.com/DayMug/DayMug" target="_blank" rel="noopener">Source on GitHub</a></li>
+              <li><a href="https://github.com/DayMug/DayMug/issues" target="_blank" rel="noopener">Report an issue</a></li>
+              <li><a href="mailto:hi@ifconfiger.com">hi@ifconfiger.com</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot__bottom">
+          <span>© 2026 DayMug · open source</span>
+          <span>brewed with care</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

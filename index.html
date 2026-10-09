@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DayMug — Self-Hosted AI Agent Workspace for You or Your Team</title>
+    <meta name="description" content="Open-source, self-hosted AI agent workspace for one person or a whole team — use it in the browser, on the phone, or inside Slack, Feishu, Telegram and WeChat." />
+    <link rel="canonical" href="https://www.daymug.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DayMug" />
+    <meta property="og:url" content="https://www.daymug.com/" />
+    <meta property="og:title" content="DayMug — Self-Hosted AI Agent Workspace for You or Your Team" />
+    <meta property="og:description" content="Open-source, self-hosted AI agent workspace for one person or a whole team — use it in the browser, on the phone, or inside Slack, Feishu, Telegram and WeChat." />
+    <meta property="og:image" content="https://www.daymug.com/avatar.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="DayMug — Self-Hosted AI Agent Workspace for You or Your Team" />
+    <meta name="twitter:description" content="Open-source, self-hosted AI agent workspace for one person or a whole team — use it in the browser, on the phone, or inside Slack, Feishu, Telegram and WeChat." />
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      // Apply the OS before first paint: the stored choice, else the visitor's
+      // own system — macOS on a Mac, Linux for everyone else (see script.js).
+      document.documentElement.classList.add("os-js");
+      (function () {
+        var os = "";
+        try {
+          os = localStorage.getItem("daymug-os");
+        } catch (e) {}
+        if (os !== "linux" && os !== "macos") {
+          var p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || navigator.userAgent || "";
+          os = /mac/i.test(p) ? "macos" : "linux";
+        }
+        document.documentElement.setAttribute("data-os", os);
+      })();
+    </script>
+  </head>
+
+  <body>
+    <!-- ===================== NAV ===================== -->
+    <header class="nav">
+      <div class="nav__inner">
+        <a class="brand" href="index.html#top" aria-label="DayMug home">
+          <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" />
+          <span class="brand__name">day<em>mug</em></span>
+        </a>
+        <nav class="nav__links">
+          <a href="index.html#features">Features</a>
+          <a href="install.html" class="nav__keep">Install</a>
+          <div class="nav__menu">
+            <a href="config.html" class="nav__menu-trigger" aria-haspopup="true">Config<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Config">
+              <a href="config.html" role="menuitem"><strong>config.yaml</strong><span>Server, auth, guardrails, upgrades</span></a>
+              <a href="providers.html" role="menuitem"><strong>Providers &amp; models</strong><span>AI accounts, models, pricing</span></a>
+              <a href="security.html" role="menuitem"><strong>Users &amp; SSO</strong><span>Who signs in, and how</span></a>
+              <a href="operations.html" role="menuitem"><strong>Upgrades &amp; troubleshooting</strong><span>Service, logs, backups</span></a>
+              <a href="cli.html" role="menuitem"><strong>Command line</strong><span>Every daymug command</span></a>
+            </div>
+          </div>
+          <div class="nav__menu">
+            <a href="chat.html" class="nav__menu-trigger" aria-haspopup="true">Usage<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Usage">
+              <a href="chat.html" role="menuitem"><strong>Chat</strong><span>Agents, models, working directory</span></a>
+              <a href="files.html" role="menuitem"><strong>Files</strong><span>Uploads and downloads</span></a>
+              <a href="skills.html" role="menuitem"><strong>Skills</strong><span>Account, user and agent skills</span></a>
+              <a href="env.html" role="menuitem"><strong>Environment variables</strong><span>Tokens and settings for tools</span></a>
+              <a href="sandbox.html" role="menuitem"><strong>Sandbox</strong><span>What a jailed agent can reach</span></a>
+              <a href="scheduled-tasks.html" role="menuitem"><strong>Scheduled tasks</strong><span>Run an agent on a cron schedule</span></a>
+              <a href="notifications.html" role="menuitem"><strong>Notifications</strong><span>Browser, Bark and PushDeer</span></a>
+              <a href="im-bots.html" role="menuitem"><strong>IM bots</strong><span>Slack, 飞书, Telegram, 微信</span></a>
+              <a href="case-mode.html" role="menuitem"><strong>Case-file mode</strong><span>Long IM threads that keep going</span></a>
+            </div>
+          </div>
+          <a href="https://github.com/DayMug/DayMug" class="nav__gh nav__keep" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+          <a href="install.html" class="nav__cta">Get started →</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <!-- ===================== HERO ===================== -->
+      <section class="hero">
+        <div class="container">
+          <div class="hero__grid">
+            <div class="hero__text">
+              <div class="hero__pre reveal" data-d="0">
+                <span class="dot"></span>
+                <span>open source</span>
+                <span>·</span>
+                <span>self-hosted</span>
+                <span>·</span>
+                <span>solo or shared</span>
+              </div>
+              <h1 class="hero__title reveal" data-d="1">
+                AI for you<br />
+                <em>or your team.</em>
+              </h1>
+              <p class="hero__sub reveal" data-d="2">
+                Install DayMug on one computer and use your AI assistants
+                from anywhere — in the browser, on the phone, or right inside
+                Slack and Feishu. Keep it to yourself, or share it with others.
+              </p>
+              <div class="hero__cta reveal" data-d="3">
+                <a href="#start" class="btn btn--primary">
+                  Get started
+                  <span class="btn__arrow">→</span>
+                </a>
+                <a href="https://github.com/DayMug/DayMug" class="btn btn--ghost" target="_blank" rel="noopener">
+                  View on GitHub
+                </a>
+              </div>
+              <div class="hero__meta reveal" data-d="4">
+                <div class="hero__meta-item">
+                  <span class="label">Install</span>
+                  <div class="hero__meta-value">on one computer</div>
+                </div>
+                <div class="hero__meta-item">
+                  <span class="label">Other devices</span>
+                  <div class="hero__meta-value">just open a link</div>
+                </div>
+                <div class="hero__meta-item">
+                  <span class="label">For</span>
+                  <div class="hero__meta-value">you, or a team</div>
+                </div>
+                <div class="hero__meta-item">
+                  <span class="label">Source</span>
+                  <div class="hero__meta-value">open on GitHub</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="hero__visual reveal" data-d="5">
+              <div class="mug-stage">
+                <div class="stain" aria-hidden="true"></div>
+
+                <div class="steam" aria-hidden="true">
+                  <span>reading brief.md</span>
+                  <span>editing draft</span>
+                  <span>running tests</span>
+                  <span>posting to #team</span>
+                  <span>done ✓</span>
+                </div>
+
+                <svg
+                  class="mug-svg"
+                  viewBox="0 0 400 460"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <!-- The brand mark (logo.svg) at hero size: the steam rising
+                       off the mug is a terminal prompt — an agent at work. -->
+                  <defs>
+                    <linearGradient id="hero-mug-bg" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#5B5CE2" />
+                      <stop offset="1" stop-color="#3B2FB8" />
+                    </linearGradient>
+                    <linearGradient id="hero-mug-sheen" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0" />
+                      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.22" />
+                      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0" />
+                    </linearGradient>
+                    <clipPath id="hero-mug-clip">
+                      <rect width="64" height="64" rx="15" />
+                    </clipPath>
+                  </defs>
+
+                  <ellipse class="mug-shadow" cx="200" cy="438" rx="104" ry="9" fill="#3B2FB8" />
+
+                  <g class="mug-float">
+                    <g transform="translate(80 170) scale(3.75)">
+                      <rect width="64" height="64" rx="15" fill="url(#hero-mug-bg)" />
+                      <g clip-path="url(#hero-mug-clip)">
+                        <g transform="rotate(20 32 32)">
+                          <rect class="mug-sheen" x="-40" y="-20" width="28" height="104" fill="url(#hero-mug-sheen)" />
+                        </g>
+                      </g>
+                      <path class="mug-chevron" d="M18 10.5l6 5.5-6 5.5" stroke="#FFD27A" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" />
+                      <path class="mug-cursor" d="M28.5 21.5h8.5" stroke="#FFD27A" stroke-width="3.6" stroke-linecap="round" />
+                      <path d="M13 28h28v10c0 8.2-6 13.5-14 13.5S13 46.2 13 38V28Z" fill="#FFFFFF" />
+                      <path d="M41 31.5h2.5c4 0 6.5 2.6 6.5 6s-2.5 6-6.5 6H41" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" />
+                    </g>
+                  </g>
+                </svg>
+
+                <div class="annot annot--right">
+                  <span class="annot__num">01</span>
+                  <span>agent at work</span>
+                </div>
+                <div class="annot annot--left">
+                  <span class="annot__num">02</span>
+                  <span>on your server</span>
+                </div>
+                <div class="annot annot--bottom">
+                  <span class="annot__txt">your daily mug</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== STRIP ===================== -->
+      <div class="strip" aria-hidden="true">
+        <div class="strip__track">
+          <span>
+            your own ai assistants <em class="sep">✦</em> bring
+            your own ai <em class="sep">✦</em> inside slack &amp; feishu
+            <em class="sep">✦</em> scheduled tasks <em class="sep">✦</em>
+            laptop, tablet, phone <em class="sep">✦</em> free &amp; open
+            source <em class="sep">✦</em>
+          </span>
+          <span>
+            your own ai assistants <em class="sep">✦</em> bring
+            your own ai <em class="sep">✦</em> inside slack &amp; feishu
+            <em class="sep">✦</em> scheduled tasks <em class="sep">✦</em>
+            laptop, tablet, phone <em class="sep">✦</em> free &amp; open
+            source <em class="sep">✦</em>
+          </span>
+        </div>
+      </div>
+
+      <!-- ===================== VALUES ===================== -->
+      <section class="bay" id="features">
+        <div class="container">
+          <div class="section-head reveal">
+            <div>
+              <div class="section-head__id">§ 01 — what you get</div>
+            </div>
+            <div>
+              <h2 class="section-head__title">
+                AI assistants that are <em>yours</em> — or everyone's.
+              </h2>
+              <p class="section-head__lede">
+                Not a throwaway chat window — a place where your assistants
+                live and every conversation is kept, whether you use it alone
+                or share it with other people.
+              </p>
+            </div>
+          </div>
+
+          <div class="values">
+            <article class="card reveal" data-d="1">
+              <span class="card__num">01 / 06</span>
+              <span class="label label--accent card__tag">// shared</span>
+              <h3 class="card__title">Set it up once, use it anywhere.</h3>
+              <p class="card__body">Give an assistant its name, its job and what it may touch — once. Use it from any device; if others join, they use the same one and nobody copies prompts around.</p>
+            </article>
+            <article class="card reveal" data-d="2">
+              <span class="card__num">02 / 06</span>
+              <span class="label label--accent card__tag">// live</span>
+              <h3 class="card__title">Watch it work, step in any time.</h3>
+              <p class="card__body">See each step as it happens. Stop it, add a note mid-way, or pick the conversation up later on another device.</p>
+            </article>
+            <article class="card reveal" data-d="1">
+              <span class="card__num">03 / 06</span>
+              <span class="label label--accent card__tag">// chat apps</span>
+              <h3 class="card__title">Lives in your chat app.</h3>
+              <p class="card__body">Connect your own Slack or Feishu bot (Telegram and WeChat work too) and ask it in a direct message or a group.</p>
+            </article>
+            <article class="card reveal" data-d="2">
+              <span class="card__num">04 / 06</span>
+              <span class="label label--accent card__tag">// scheduled</span>
+              <h3 class="card__title">Runs on a timer.</h3>
+              <p class="card__body">Daily report at 9:00, weekly summary on Friday — set it once, and the result is posted to your chat.</p>
+            </article>
+            <article class="card reveal" data-d="1">
+              <span class="card__num">05 / 06</span>
+              <span class="label label--accent card__tag">// anywhere</span>
+              <h3 class="card__title">Any device, nothing to install.</h3>
+              <p class="card__body">It's a website. Start on your laptop, check in from your phone — it's the same conversation.</p>
+            </article>
+            <article class="card reveal" data-d="2">
+              <span class="card__num">06 / 06</span>
+              <span class="label label--accent card__tag">// yours</span>
+              <h3 class="card__title">Your computer, your accounts.</h3>
+              <p class="card__body">Everything is stored on the computer you chose. Use the AI plan you already pay for, or an API key. Free and open source.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== APP MOCKUP ===================== -->
+      <section class="bay preview">
+        <div class="container">
+          <div class="preview__wrap">
+            <div class="preview__copy reveal">
+              <div class="section-head__id">§ 02 — what it looks like</div>
+              <h3>Chat on the left,<br />files on the right.</h3>
+              <p>
+                Pick an assistant, type what you need, and watch it work on
+                the files right next to the chat.
+              </p>
+              <ul class="preview__list">
+                <li>Switch assistants with one click</li>
+                <li>Every conversation is saved</li>
+                <li>Open and preview files without leaving the page</li>
+              </ul>
+            </div>
+
+            <div class="window reveal" data-d="1" aria-hidden="true">
+              <div class="window__bar">
+                <i></i><i></i><i></i>
+                <span class="url"
+                  >daymug — writer / soften the welcome email</span
+                >
+              </div>
+              <div class="window__body">
+                <div class="ws-rail">
+                  <div class="avatar a1 active" title="Writer">W</div>
+                  <div class="avatar a2" title="Researcher">R</div>
+                  <div class="avatar a3" title="Editor">E</div>
+                  <div class="avatar a4" title="Add agent">+</div>
+                </div>
+
+                <div class="ws-sessions">
+                  <div class="head">— conversations</div>
+                  <ul>
+                    <li class="active">
+                      soften the welcome email
+                      <small>just now · 12 messages</small>
+                    </li>
+                    <li>
+                      draft Q4 launch post
+                      <small>2 h ago · 5 messages</small>
+                    </li>
+                    <li>
+                      polish the about page
+                      <small>yesterday · 9 messages</small>
+                    </li>
+                    <li>
+                      summarise the user calls
+                      <small>last week · 28 messages</small>
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="ws-chat">
+                  <div class="msg you">
+                    <span class="msg-label">You</span>
+                    <div class="msg-bubble">
+                      rewrite the welcome email so it sounds warmer
+                    </div>
+                  </div>
+
+                  <div class="msg bot">
+                    <span class="msg-label">Writer</span>
+                    <div class="msg-body">
+                      Sure — let me look at what's there now.
+                    </div>
+                    <div class="tool">
+                      <div class="tool-head">
+                        <span class="tool-icon">✦</span>
+                        <span class="tool-name">Read</span>
+                        <span class="tool-spacer"></span>
+                        <span class="tool-check">✓</span>
+                      </div>
+                      <div class="tool-detail">welcome.md</div>
+                    </div>
+                    <div class="tool">
+                      <div class="tool-head">
+                        <span class="tool-icon">✦</span>
+                        <span class="tool-name">Edit</span>
+                        <span class="tool-spacer"></span>
+                        <span class="tool-check">✓</span>
+                      </div>
+                      <div class="tool-detail">welcome.md — saved</div>
+                    </div>
+                    <div class="msg-body">
+                      Softened the opening and added a friendlier sign-off. Want
+                      me to draft a few variants you can pick from?
+                    </div>
+                  </div>
+
+                  <div class="ws-input">
+                    <span
+                      >yes, and try one with a coffee joke<span
+                        class="cursor"
+                      ></span
+                    ></span>
+                    <span class="kbd">⌘↵</span>
+                  </div>
+                </div>
+
+                <div class="ws-workspace">
+                  <div class="head">— folders</div>
+                  <ul class="folder-list">
+                    <li class="active">
+                      <svg
+                        class="folder-icon"
+                        viewBox="0 0 16 13"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.3"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M1.5 3 Q1.5 2 2.5 2 H5.5 L7 3.5 H13.5 Q14.5 3.5 14.5 4.5 V11 Q14.5 12 13.5 12 H2.5 Q1.5 12 1.5 11 Z"
+                        />
+                      </svg>
+                      Team handbook
+                    </li>
+                    <li>
+                      <svg
+                        class="folder-icon"
+                        viewBox="0 0 16 13"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.3"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M1.5 3 Q1.5 2 2.5 2 H5.5 L7 3.5 H13.5 Q14.5 3.5 14.5 4.5 V11 Q14.5 12 13.5 12 H2.5 Q1.5 12 1.5 11 Z"
+                        />
+                      </svg>
+                      Drafts
+                    </li>
+                    <li>
+                      <svg
+                        class="folder-icon"
+                        viewBox="0 0 16 13"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.3"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M1.5 3 Q1.5 2 2.5 2 H5.5 L7 3.5 H13.5 Q14.5 3.5 14.5 4.5 V11 Q14.5 12 13.5 12 H2.5 Q1.5 12 1.5 11 Z"
+                        />
+                      </svg>
+                      Inbox
+                    </li>
+                    <li>
+                      <svg
+                        class="folder-icon"
+                        viewBox="0 0 16 13"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.3"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M1.5 3 Q1.5 2 2.5 2 H5.5 L7 3.5 H13.5 Q14.5 3.5 14.5 4.5 V11 Q14.5 12 13.5 12 H2.5 Q1.5 12 1.5 11 Z"
+                        />
+                      </svg>
+                      Press releases
+                    </li>
+                    <li>
+                      <svg
+                        class="folder-icon"
+                        viewBox="0 0 16 13"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.3"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M1.5 3 Q1.5 2 2.5 2 H5.5 L7 3.5 H13.5 Q14.5 3.5 14.5 4.5 V11 Q14.5 12 13.5 12 H2.5 Q1.5 12 1.5 11 Z"
+                        />
+                      </svg>
+                      Onboarding
+                    </li>
+                    <li>
+                      <svg
+                        class="folder-icon"
+                        viewBox="0 0 16 13"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.3"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M1.5 3 Q1.5 2 2.5 2 H5.5 L7 3.5 H13.5 Q14.5 3.5 14.5 4.5 V11 Q14.5 12 13.5 12 H2.5 Q1.5 12 1.5 11 Z"
+                        />
+                      </svg>
+                      Archive
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== GET STARTED ===================== -->
+      <section class="bay usage" id="start">
+        <div class="container">
+          <div class="section-head reveal">
+            <div>
+              <div class="section-head__id">§ 03 — get started</div>
+            </div>
+            <div>
+              <h2 class="section-head__title">
+                From zero to your first chat, in <em>six steps</em>.
+              </h2>
+              <p class="section-head__lede">
+                Steps 1–3 happen once, on one computer, and take about five
+                minutes. Everything after that is done in the browser.
+              </p>
+            </div>
+          </div>
+
+          <ol class="journey">
+            <li class="journey__step reveal">
+              <span class="journey__num">1</span>
+              <div class="journey__main">
+                <h4 class="journey__title">Pick a computer to run it</h4>
+                <p class="journey__body">A Mac or a Linux machine that stays on — an office server, a cloud VM, even a spare Mac mini. Only this computer installs anything; every other device just uses a browser.</p>
+                <p class="journey__need">You also need: <strong>Node.js 18+</strong> on that computer, and an <strong>AI subscription</strong> (or an API key) — Claude, Codex or any compatible endpoint.</p>
+              </div>
+            </li>
+            <li class="journey__step reveal">
+              <span class="journey__num">2</span>
+              <div class="journey__main">
+                <h4 class="journey__title">Run the installer</h4>
+                <p class="journey__body">Open Terminal on that computer and paste this line. It sets everything up and starts DayMug — no need to be root.</p>
+                <div class="os-switch"></div>
+                  <div class="codeblock" data-os-only="linux">
+                    <div class="codeblock__head">
+                      <span><span class="tag">linux</span> &nbsp;— in Terminal</span>
+                      <button class="codeblock__copy" data-copy="curl -fsSL https://github.com/DayMug/DayMug/releases/latest/download/install.sh | bash">copy</button>
+                    </div>
+                    <pre class="codeblock__body"><span class="pmt">$</span> <span class="fn">curl</span> <span class="key">-fsSL</span> <span class="str">https://github.com/DayMug/DayMug/releases/latest/download/install.sh</span> | <span class="fn">bash</span></pre>
+                  </div>
+                  <div class="codeblock" data-os-only="macos">
+                    <div class="codeblock__head">
+                      <span><span class="tag">macOS</span> &nbsp;— in Terminal · Apple Silicon</span>
+                      <button class="codeblock__copy" data-copy="curl -fsSL https://github.com/DayMug/DayMug/releases/latest/download/install.sh | bash">copy</button>
+                    </div>
+                    <pre class="codeblock__body"><span class="pmt">$</span> <span class="fn">curl</span> <span class="key">-fsSL</span> <span class="str">https://github.com/DayMug/DayMug/releases/latest/download/install.sh</span> | <span class="fn">bash</span></pre>
+                  </div>
+              </div>
+            </li>
+            <li class="journey__step reveal">
+              <span class="journey__num">3</span>
+              <div class="journey__main">
+                <h4 class="journey__title">Open it and create your account</h4>
+                <p class="journey__body">Go to <code>http://127.0.0.1:8090</code> in a browser on that computer. The first person to open it creates the admin account.</p>
+                
+              </div>
+            </li>
+            <li class="journey__step reveal">
+              <span class="journey__num">4</span>
+              <div class="journey__main">
+                <h4 class="journey__title">Connect your AI</h4>
+                <p class="journey__body">Add the AI account you already pay for, click <strong>Log in</strong> and approve in the browser — or paste an API key. Then add the model you want to use.</p>
+                <p class="journey__where">Admin settings → Providers &amp; models</p>
+              </div>
+            </li>
+            <li class="journey__step reveal">
+              <span class="journey__num">5</span>
+              <div class="journey__main">
+                <h4 class="journey__title">Create your first assistant</h4>
+                <p class="journey__body">Give it a name, say what it's for, and pick the folder it works in. Then open a chat and ask it something.</p>
+                <p class="journey__where">Settings → Agents → New Agent</p>
+              </div>
+            </li>
+            <li class="journey__step reveal">
+              <span class="journey__num">6</span>
+              <div class="journey__main">
+                <h4 class="journey__title">Optional: share it</h4>
+                <p class="journey__body">Using it on your own? You are done. To reach it from elsewhere or let other people in, put it on your network, behind a tunnel or on your own domain (<a href="install.html#expose">how to</a>), then add people by name or let them sign in with SSO.</p>
+                <p class="journey__where">Admin settings → Users</p>
+              </div>
+            </li>
+          </ol>
+
+          <div class="journey__next reveal">
+            <span class="journey__next-label">Then, when you're ready</span>
+            <a href="im-bots.html">Put an assistant in Slack or Feishu →</a>
+            <a href="scheduled-tasks.html">Run an agent on a schedule →</a>
+            <a href="install.html">All docs →</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== Q & A ===================== -->
+      <section class="bay qa" id="qa">
+        <div class="container">
+          <div class="section-head reveal">
+            <div>
+              <div class="section-head__id">§ 04 — questions</div>
+            </div>
+            <div>
+              <h2 class="section-head__title">Frequently <em>brewed</em>.</h2>
+              <p class="section-head__lede">
+                Short answers. If yours isn't here, ask us.
+              </p>
+            </div>
+          </div>
+
+          <div class="qa-list reveal">
+            <details class="qa-item" open>
+              <summary>
+                <span class="qa-num">Q.01</span>
+                <span class="qa-q">Do other devices or people need to install anything?</span>
+                <span class="qa-toggle" aria-hidden="true"></span>
+              </summary>
+              <div class="qa-a">
+                <p>No. Your other devices — and anyone you share it with — open a link in the browser or on the phone, or talk to the bot in Slack or Feishu. Only the one computer that runs DayMug installs it.</p>
+              </div>
+            </details>
+            <details class="qa-item">
+              <summary>
+                <span class="qa-num">Q.02</span>
+                <span class="qa-q">Do I need to pay for the AI?</span>
+                <span class="qa-toggle" aria-hidden="true"></span>
+              </summary>
+              <div class="qa-a">
+                <p>DayMug itself is free. It uses the AI plan — or the API key — you already have. We don't sell credits.</p>
+              </div>
+            </details>
+            <details class="qa-item">
+              <summary>
+                <span class="qa-num">Q.03</span>
+                <span class="qa-q">Where is our data stored?</span>
+                <span class="qa-toggle" aria-hidden="true"></span>
+              </summary>
+              <div class="qa-a">
+                <p>On the computer you installed it on. DayMug has no tracking; it only talks to the AI service and the chat apps you connect.</p>
+              </div>
+            </details>
+            <details class="qa-item">
+              <summary>
+                <span class="qa-num">Q.04</span>
+                <span class="qa-q">Can several people share one AI account?</span>
+                <span class="qa-toggle" aria-hidden="true"></span>
+              </summary>
+              <div class="qa-a">
+                <p>Yes. When the account is busy, the next request waits in a visible queue. You can also give each person their own account. Check your AI provider's terms for how a plan may be shared.</p>
+              </div>
+            </details>
+            <details class="qa-item">
+              <summary>
+                <span class="qa-num">Q.05</span>
+                <span class="qa-q">Does it work on Windows?</span>
+                <span class="qa-toggle" aria-hidden="true"></span>
+              </summary>
+              <div class="qa-a">
+                <p>On Windows, just use the browser. The computer that <em>runs</em> DayMug needs to be a Mac or Linux machine.</p>
+              </div>
+            </details>
+            <details class="qa-item">
+              <summary>
+                <span class="qa-num">Q.06</span>
+                <span class="qa-q">Is it open source?</span>
+                <span class="qa-toggle" aria-hidden="true"></span>
+              </summary>
+              <div class="qa-a">
+                <p>Yes — everything is on <a href="https://github.com/DayMug/DayMug" target="_blank" rel="noopener">GitHub</a>. The license is Apache 2.0 with one extra rule: if you offer DayMug to others, keep the "Powered by DayMug" note visible.</p>
+              </div>
+            </details>
+          </div>
+
+          <div class="qa-foot reveal">
+            <span>— still curious?</span>
+            <span>
+              open an
+              <a href="https://github.com/DayMug/DayMug/issues" target="_blank" rel="noopener">issue on GitHub</a>
+              or write to
+              <a href="mailto:hi@ifconfiger.com">hi@ifconfiger.com</a>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CLOSING ===================== -->
+      <section class="closing">
+        <div class="container">
+          <div class="reveal">
+            <h2 class="closing__title">Ready to <em>pour one</em>?</h2>
+            <p class="closing__sub">
+              One computer, one command, and an AI assistant for you — or
+              for everyone you share it with.
+            </p>
+            <div class="hero__cta" style="justify-content: center">
+              <a href="#start" class="btn btn--primary">
+                Get started
+                <span class="btn__arrow">→</span>
+              </a>
+              <a href="install.html" class="btn btn--ghost">
+                Read the docs
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="foot">
+      <div class="container">
+        <div class="foot__grid">
+          <div class="foot__brand">
+            <div style="display: inline-flex; align-items: center; gap: 10px">
+              <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" style="width: 28px; height: 28px" />
+              <span class="brand__name">day<em>mug</em></span>
+            </div>
+            <p>
+              An open-source, self-hosted room for your AI agents — for one
+              person or a whole team. Open it on any device. Keep your work
+              close at hand.
+            </p>
+          </div>
+          <div class="foot__col">
+            <h6>Install &amp; config</h6>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Usage</h6>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Community</h6>
+            <ul>
+              <li><a href="https://github.com/DayMug/DayMug" target="_blank" rel="noopener">Source on GitHub</a></li>
+              <li><a href="https://github.com/DayMug/DayMug/issues" target="_blank" rel="noopener">Report an issue</a></li>
+              <li><a href="mailto:hi@ifconfiger.com">hi@ifconfiger.com</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot__bottom">
+          <span>© 2026 DayMug · open source</span>
+          <span>brewed with care</span>
+        </div>
+      </div>
+    </footer>
+    <script src="script.js"></script>
+  </body>
+</html>

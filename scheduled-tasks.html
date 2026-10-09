@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scheduled Tasks in DayMug — Run AI Agents on a Cron Schedule</title>
+    <meta name="description" content="Run a DayMug agent on a cron schedule: create a task, cron syntax and timezones, what each run does, delivering results to Slack or Feishu." />
+    <link rel="canonical" href="https://www.daymug.com/scheduled-tasks" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DayMug" />
+    <meta property="og:url" content="https://www.daymug.com/scheduled-tasks" />
+    <meta property="og:title" content="Scheduled Tasks in DayMug — Run AI Agents on a Cron Schedule" />
+    <meta property="og:description" content="Run a DayMug agent on a cron schedule: create a task, cron syntax and timezones, what each run does, delivering results to Slack or Feishu." />
+    <meta property="og:image" content="https://www.daymug.com/avatar.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Scheduled Tasks in DayMug — Run AI Agents on a Cron Schedule" />
+    <meta name="twitter:description" content="Run a DayMug agent on a cron schedule: create a task, cron syntax and timezones, what each run does, delivering results to Slack or Feishu." />
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      // Apply the OS before first paint: the stored choice, else the visitor's
+      // own system — macOS on a Mac, Linux for everyone else (see script.js).
+      document.documentElement.classList.add("os-js");
+      (function () {
+        var os = "";
+        try {
+          os = localStorage.getItem("daymug-os");
+        } catch (e) {}
+        if (os !== "linux" && os !== "macos") {
+          var p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || navigator.userAgent || "";
+          os = /mac/i.test(p) ? "macos" : "linux";
+        }
+        document.documentElement.setAttribute("data-os", os);
+      })();
+    </script>
+  </head>
+
+  <body>
+    <header class="nav">
+      <div class="nav__inner">
+        <a class="brand" href="index.html#top" aria-label="DayMug home">
+          <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" />
+          <span class="brand__name">day<em>mug</em></span>
+        </a>
+        <nav class="nav__links">
+          <a href="index.html#features">Features</a>
+          <a href="install.html" class="nav__keep">Install</a>
+          <div class="nav__menu">
+            <a href="config.html" class="nav__menu-trigger" aria-haspopup="true">Config<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Config">
+              <a href="config.html" role="menuitem"><strong>config.yaml</strong><span>Server, auth, guardrails, upgrades</span></a>
+              <a href="providers.html" role="menuitem"><strong>Providers &amp; models</strong><span>AI accounts, models, pricing</span></a>
+              <a href="security.html" role="menuitem"><strong>Users &amp; SSO</strong><span>Who signs in, and how</span></a>
+              <a href="operations.html" role="menuitem"><strong>Upgrades &amp; troubleshooting</strong><span>Service, logs, backups</span></a>
+              <a href="cli.html" role="menuitem"><strong>Command line</strong><span>Every daymug command</span></a>
+            </div>
+          </div>
+          <div class="nav__menu">
+            <a href="chat.html" class="nav__menu-trigger active" aria-haspopup="true">Usage<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav__menu-panel" role="menu" aria-label="Usage">
+              <a href="chat.html" role="menuitem"><strong>Chat</strong><span>Agents, models, working directory</span></a>
+              <a href="files.html" role="menuitem"><strong>Files</strong><span>Uploads and downloads</span></a>
+              <a href="skills.html" role="menuitem"><strong>Skills</strong><span>Account, user and agent skills</span></a>
+              <a href="env.html" role="menuitem"><strong>Environment variables</strong><span>Tokens and settings for tools</span></a>
+              <a href="sandbox.html" role="menuitem"><strong>Sandbox</strong><span>What a jailed agent can reach</span></a>
+              <a href="scheduled-tasks.html" class="active" aria-current="page" role="menuitem"><strong>Scheduled tasks</strong><span>Run an agent on a cron schedule</span></a>
+              <a href="notifications.html" role="menuitem"><strong>Notifications</strong><span>Browser, Bark and PushDeer</span></a>
+              <a href="im-bots.html" role="menuitem"><strong>IM bots</strong><span>Slack, 飞书, Telegram, 微信</span></a>
+              <a href="case-mode.html" role="menuitem"><strong>Case-file mode</strong><span>Long IM threads that keep going</span></a>
+            </div>
+          </div>
+          <a href="https://github.com/DayMug/DayMug" class="nav__gh nav__keep" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+          <a href="install.html" class="nav__cta">Get started →</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top" class="docs">
+      <div class="container docs__inner">
+        <aside class="docs-side" aria-label="Documentation">
+          <div class="docs-side__group">
+            <span class="label">Install</span>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Config</span>
+            <ul>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="docs-side__group">
+            <span class="label">Usage</span>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html" class="active" aria-current="page">Scheduled tasks</a>
+                <ul>
+                  <li><a href="#create">Create a task</a></li>
+                  <li><a href="#syntax">Cron syntax</a></li>
+                  <li><a href="#runs">What a run does</a></li>
+                  <li><a href="#bot">Deliver results to IM</a></li>
+                  <li><a href="#paused">Paused tasks</a></li>
+                </ul>
+              </li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+        </aside>
+
+        <article class="doc">
+          <span class="doc__eyebrow">Usage · Scheduled tasks</span>
+          <h1>Let an agent <em>run on a clock.</em></h1>
+          <p class="doc__lede">
+            A scheduled task starts one of your agents on a cron schedule — a
+            morning report, a nightly check, a weekly digest. Each run is an
+            ordinary conversation you can open, continue and share, and it
+            uses the same account, environment and sandbox as a chat you start
+            yourself.
+          </p>
+
+          <h2 id="create">Create a task</h2>
+          <p>Open <em>Settings → Scheduled tasks</em> → <em>Add task</em>. Every user has this page and sees only their own tasks.</p>
+          <table class="doc-table">
+            <thead><tr><th>Field</th><th>What to put</th></tr></thead>
+            <tbody>
+              <tr><td>Agent</td><td>One of your agents. Required.</td></tr>
+              <tr><td>Model</td><td>Optional. Empty follows the agent's default model.</td></tr>
+              <tr><td>Cron expression</td><td>Five fields, see <a href="#syntax">below</a>. Required.</td></tr>
+              <tr><td>Timezone</td><td>An IANA name such as <code>Asia/Shanghai</code> or <code>America/New_York</code>. Starts as your browser's; empty means UTC.</td></tr>
+              <tr><td>Description</td><td>Optional note for yourself.</td></tr>
+              <tr><td>Task content</td><td>The prompt. It becomes the first user message of each run's conversation. Required, up to 64&nbsp;KB.</td></tr>
+              <tr><td>Enabled</td><td>Untick to pause: the schedule and history stay, no new runs start.</td></tr>
+              <tr><td>Send notification</td><td>Push the result through your Bark or PushDeer channel (<a href="notifications.html">Notifications</a>).</td></tr>
+              <tr><td>Send result to bot</td><td>Also post the answer into one of the agent's IM threads (<a href="#bot">below</a>).</td></tr>
+            </tbody>
+          </table>
+          <p><em>Save task</em>. The list shows each task's <em>Next run</em> and <em>Last run</em>, and <em>Open chat</em> takes you to its conversation.</p>
+
+          <h2 id="syntax">Cron syntax</h2>
+          <p>Standard five-field POSIX cron: <code>minute hour day-of-month month day-of-week</code>, evaluated in the task's timezone.</p>
+          <table class="doc-table">
+            <thead><tr><th>Expression</th><th>Runs</th></tr></thead>
+            <tbody>
+              <tr><td><code>0 * * * *</code></td><td>every hour, on the hour</td></tr>
+              <tr><td><code>0 9 * * 1-5</code></td><td>weekdays at 09:00 (the default for a new task)</td></tr>
+              <tr><td><code>0 18 * * *</code></td><td>every day at 18:00</td></tr>
+              <tr><td><code>*/15 9-18 * * 1-5</code></td><td>every 15 minutes during office hours</td></tr>
+              <tr><td><code>0 8 1 * *</code></td><td>08:00 on the first of each month</td></tr>
+            </tbody>
+          </table>
+
+          <h2 id="runs">What a run does</h2>
+          <ul>
+            <li>It opens a new conversation for the agent, titled <em>Scheduled · </em> plus the start of the prompt, in the agent's working directory.</li>
+            <li>It waits for a free slot on the account like any other task — up to 30 minutes.</li>
+            <li>If the previous run of the same task is still going, the new one is skipped (not stacked) and the reason shows as the task's last error.</li>
+            <li>Missed runs while the server was down: on start-up only the most recent one is caught up, and only if it is under 72 hours old.</li>
+            <li>Nothing starts while an admin has paused new tasks for maintenance.</li>
+          </ul>
+
+          <h2 id="bot">Deliver results to IM</h2>
+          <p>
+            With <em>Send result to bot</em> on, the answer is also posted into
+            an IM thread of the agent, prefixed <code>⏰ DayMug 定时任务:</code>.
+            <em>Deliver through</em> picks the thread; the default is the
+            agent's most recent one. The agent needs a thread first — mention
+            the bot once in Slack, 飞书, Telegram or 微信 and it appears in the
+            list. Bark / PushDeer stay quiet for that run, and follow-ups you
+            type in the web conversation are not relayed to IM.
+          </p>
+
+          <h2 id="paused">Paused tasks</h2>
+          <p>A task stops starting runs when:</p>
+          <ul>
+            <li><strong>You paused it</strong> — it shows <em>Paused</em>; tick <em>Enabled</em> again.</li>
+            <li><strong>Its agent is gone</strong> — archived, deleted or moved to another owner. DayMug disables the task the next time it would fire and says so on the task; create a new task for an existing agent.</li>
+            <li><strong>Its schedule no longer parses</strong> — the expression or timezone is invalid. Correct it and enable the task again.</li>
+          </ul>
+          <p>Enabling a task again clears the reason and the last error.</p>
+          <div class="callout">
+            <span class="callout__label">Agents can't schedule themselves</span>
+            <p>Tasks are created only from this page. Asking an agent in chat to “run this every morning” won't create one.</p>
+          </div>
+          <nav class="doc-pager" aria-label="Pagination">
+            <a class="doc-pager__link" href="sandbox.html"><span>← Previous</span><strong>Sandbox</strong></a>
+            <a class="doc-pager__link doc-pager__link--next" href="notifications.html"><span>Next →</span><strong>Notifications</strong></a>
+          </nav>
+        </article>
+      </div>
+    </main>
+
+    <footer class="foot">
+      <div class="container">
+        <div class="foot__grid">
+          <div class="foot__brand">
+            <div style="display: inline-flex; align-items: center; gap: 10px">
+              <img class="brand__mark" src="logo.svg" alt="" aria-hidden="true" style="width: 28px; height: 28px" />
+              <span class="brand__name">day<em>mug</em></span>
+            </div>
+            <p>
+              An open-source, self-hosted room for your AI agents — for one
+              person or a whole team. Open it on any device. Keep your work
+              close at hand.
+            </p>
+          </div>
+          <div class="foot__col">
+            <h6>Install &amp; config</h6>
+            <ul>
+              <li><a href="install.html">Install</a></li>
+              <li><a href="config.html">config.yaml</a></li>
+              <li><a href="providers.html">Providers &amp; models</a></li>
+              <li><a href="security.html">Users &amp; SSO</a></li>
+              <li><a href="operations.html">Upgrades &amp; troubleshooting</a></li>
+              <li><a href="cli.html">Command line</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Usage</h6>
+            <ul>
+              <li><a href="chat.html">Chat</a></li>
+              <li><a href="files.html">Files</a></li>
+              <li><a href="skills.html">Skills</a></li>
+              <li><a href="env.html">Environment variables</a></li>
+              <li><a href="sandbox.html">Sandbox</a></li>
+              <li><a href="scheduled-tasks.html">Scheduled tasks</a></li>
+              <li><a href="notifications.html">Notifications</a></li>
+              <li><a href="im-bots.html">IM bots</a></li>
+              <li><a href="case-mode.html">Case-file mode</a></li>
+            </ul>
+          </div>
+          <div class="foot__col">
+            <h6>Community</h6>
+            <ul>
+              <li><a href="https://github.com/DayMug/DayMug" target="_blank" rel="noopener">Source on GitHub</a></li>
+              <li><a href="https://github.com/DayMug/DayMug/issues" target="_blank" rel="noopener">Report an issue</a></li>
+              <li><a href="mailto:hi@ifconfiger.com">hi@ifconfiger.com</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot__bottom">
+          <span>© 2026 DayMug · open source</span>
+          <span>brewed with care</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
